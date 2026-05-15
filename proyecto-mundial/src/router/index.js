@@ -1,24 +1,45 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-// Acá vas a ir importando tus componentes/vistas a medida que los crees
-// import Home from '../components/Home.vue'
-// import Login from '../components/Login.vue'
+import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
+import RankingGlobalView from '../views/RankingGlobalView.vue'
+import FaseDeGrupo from '../views/FaseDeGrupo.vue'
+import LlaveDeEliminacion from '../views/LlaveDeEliminacion.vue'
+import PerfilView from '../views/PerfilView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    /* Ejemplo de cómo van a quedar tus rutas:
-    {
+  {
       path: '/',
-      name: 'home',
-      component: Home
+      name: 'login',
+      component: LoginView
     },
     {
-      path: '/login',
-      name: 'login',
-      component: Login
+      path: '/home',
+      name: 'home',
+      component: HomeView
+    },
+    {
+      path: '/ranking',
+      name: 'ranking',
+      component: RankingGlobalView
+    },
+    {
+      path: '/fase-grupos',
+      name: 'fase-grupos',
+      component: FaseDeGrupo
+    },
+    {
+      path: '/llave-eliminacion',
+      name: 'llave-eliminacion',
+      component: LlaveDeEliminacion
+    },
+    {
+      path: '/perfil',
+      name: 'perfil',
+      component: PerfilView
     }
-    */
   ]
 })
 
