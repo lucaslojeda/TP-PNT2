@@ -3,29 +3,27 @@
     <Sidebar />
 
     <main class="home-content">
-
       <section class="home-main">
-
         <div class="home-left">
-
           <header class="home-header">
             <h1>Bienvenido, Usuario</h1>
             <p>Completá tus predicciones por fecha y seguí tu progreso.</p>
           </header>
 
           <section class="home-filters">
-            <h2>Fecha 1</h2>
-            <p>Acá después va el selector de fecha.</p>
+            <FechaSelector v-model="fechaSeleccionada" />
           </section>
 
           <section class="matches-section">
-            <Matchcard />
+            <Matchcard
+              v-for="partido in partidosFiltrados"
+              :key="partido.id"
+              :partido="partido"
+            />
           </section>
-
         </div>
 
         <div class="home-right">
-
           <aside class="top-ranking">
             <h2>Top 3 Ranking</h2>
             <p>1° Usuario - 0 pts</p>
@@ -37,23 +35,48 @@
             <h2>Resumen</h2>
             <p>Puntos actuales: 0</p>
             <p>Predicciones guardadas: 0</p>
-            <p>Fecha límite: a definir</p>
+            <p>Fecha seleccionada: {{ fechaSeleccionada }}</p>
           </aside>
-
         </div>
-
       </section>
-
     </main>
   </div>
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
+
 import Sidebar from '@/components/Sidebar.vue'
 import Matchcard from '@/components/Matchcard.vue'
+import FechaSelector from '@/components/FechaSelector.vue'
+
+import datosProde from '@/dataProde.json'
+
+const fechaSeleccionada = ref(1)
+
+const partidosFiltrados = computed(() => {
+  return datosProde.partidos
+    .filter(partido => partido.fechaGrupo === fechaSeleccionada.value)
+    .sort((a, b) => {
+      const fechaA = new Date(`${a.fecha}T${a.hora}`)
+      const fechaB = new Date(`${b.fecha}T${b.hora}`)
+      return fechaA - fechaB
+    })
+})
 </script>
 
 <style scoped>
+:global(body) {
+  margin: 0;
+  background-color: grey;
+  overflow-x: hidden;
+}
+
+:global(#app) {
+  min-height: 100vh;
+  background-color: grey;
+}
+
 .home-container {
   background-color: grey;
   min-height: 100vh;
@@ -61,27 +84,25 @@ import Matchcard from '@/components/Matchcard.vue'
 }
 
 .home-content {
-  margin-left: 220px;
-  padding: 24px 8px;
+  margin-left: 250px;
+  min-height: 100vh;
+  width: calc(100vw - 250px);
+  background-color: grey;
+  padding: 32px 40px;
+  box-sizing: border-box;
 }
 
 .home-main {
-  display: flex;
-  gap: 30px;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 36px;
+  align-items: start;
+  width: 100%;
 }
 
 .home-left {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.home-right {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-left: 550px;
+  width: 100%;
+  min-width: 0;
 }
 
 .home-header {
@@ -90,9 +111,8 @@ import Matchcard from '@/components/Matchcard.vue'
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 20px;
-  margin-top: -10px;
-  margin-left: -150px;
   width: 500px;
+  box-sizing: border-box;
 }
 
 .home-header h1 {
@@ -106,29 +126,62 @@ import Matchcard from '@/components/Matchcard.vue'
 }
 
 .home-filters {
-  margin-bottom: 20px;
-  margin-left: -150px;
+  margin-bottom: 24px;
 }
 
 .matches-section {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(380px, 1fr));
+  gap: 24px;
+  width: 100%;
+  align-items: start;
+}
+
+.home-right {
+  width: 280px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin-left: -150px;
+  gap: 20px;
+  position: sticky;
+  top: 32px;
 }
 
 .top-ranking,
 .home-summary {
-  width: 280px;
+  width: 100%;
   background-color: #1f1f1f;
   color: white;
   padding: 20px;
   border-radius: 12px;
-  margin-left: -50px;
+  box-sizing: border-box;
 }
 
 .top-ranking h2,
 .home-summary h2 {
+  margin-top: 0;
   margin-bottom: 10px;
+}
+
+.top-ranking p,
+.home-summary p {
+  margin: 8px 0;
+}
+
+@media (max-width: 1300px) {
+  .home-main {
+    grid-template-columns: 1fr;
+  }
+
+  .home-right {
+    position: static;
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 1050px) {
+  .matches-section {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
