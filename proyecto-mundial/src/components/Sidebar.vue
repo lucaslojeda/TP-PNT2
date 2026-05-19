@@ -22,6 +22,10 @@ import logo from '@/assets/logo.png';
             Home
         </RouterLink>
 
+        <RouterLink to="/infoSelecciones">
+            Selecciones
+        </RouterLink>
+
         <RouterLink to="/fase-grupos">
             Fase de grupos
         </RouterLink>

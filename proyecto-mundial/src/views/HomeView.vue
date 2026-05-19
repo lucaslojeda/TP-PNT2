@@ -81,45 +81,40 @@ import Matchcard from '@/components/Matchcard.vue'
   display: flex;
   flex-direction: column;
   gap: 20px;
-
   margin-left: 550px;
 }
 
 .home-header {
   background-color: #1f1f1f;
-
   color: white;
-
   padding: 20px;
-
   border-radius: 12px;
-
   margin-bottom: 20px;
   margin-top: -10px;
-
+  margin-left: -150px;
   width: 500px;
 }
 
 .home-header h1 {
   margin: 0;
-
   line-height: 1.1;
 }
 
 .home-header p {
   margin-top: 8px;
-
   color: #ccc;
 }
 
 .home-filters {
   margin-bottom: 20px;
+  margin-left: -150px;
 }
 
 .matches-section {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin-left: -150px;
 }
 
 .top-ranking,
@@ -129,6 +124,7 @@ import Matchcard from '@/components/Matchcard.vue'
   color: white;
   padding: 20px;
   border-radius: 12px;
+  margin-left: -50px;
 }
 
 .top-ranking h2,
