@@ -6,6 +6,7 @@ import RankingGlobalView from '../views/RankingGlobalView.vue'
 import FaseDeGrupo from '../views/FaseDeGrupo.vue'
 import LlaveDeEliminacion from '../views/LlaveDeEliminacion.vue'
 import PerfilView from '../views/PerfilView.vue'
+import InfoSelecciones from '@/views/InfoSelecciones.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +20,11 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: HomeView
+    },
+    {
+      path: '/infoSelecciones',
+      name: 'infoSelecciones',
+      component: InfoSelecciones
     },
     {
       path: '/ranking',
