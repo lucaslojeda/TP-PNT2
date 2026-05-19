@@ -27,6 +27,15 @@ const credencialesIncompletas = computed(() => {
 function iniciarSesion() {
   if (usuario.value === 'admin' && contrasena.value === 'admin123') {
       isError.value = false;
+      
+      // Guardar datos del usuario en localStorage
+      const usuarioData = {
+        nombre: usuario.value,
+        foto: null,
+        puntos: 0
+      };
+      localStorage.setItem('usuarioProde', JSON.stringify(usuarioData));
+      
       router.push('/home')
   } else {
     isError.value = true;
