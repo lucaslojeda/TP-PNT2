@@ -1,0 +1,170 @@
+{
+  "paises": [
+    { "id": "MEX", "nombre": "México", "grupo": "A", "bandera": "https://flagcdn.com/w320/mx.png", "cuerpoTecnico": { "directorTecnico": "Javier Aguirre" }, "jugadores": [
+      { "dorsal": 1, "nombre": "Luis Malagón", "posicion": "Arquero" },
+      { "dorsal": 3, "nombre": "César Montes", "posicion": "Defensor" },
+      { "dorsal": 5, "nombre": "Johan Vásquez", "posicion": "Defensor" },
+      { "dorsal": 4, "nombre": "Edson Álvarez", "posicion": "Mediocampista" },
+      { "dorsal": 11, "nombre": "Santiago Giménez", "posicion": "Delantero" }
+    ]},
+    { "id": "RSA", "nombre": "Sudáfrica", "grupo": "A", "bandera": "https://flagcdn.com/w320/za.png", "cuerpoTecnico": { "directorTecnico": "Hugo Broos" }, "jugadores": [] },
+    { "id": "KOR", "nombre": "Corea del Sur", "grupo": "A", "bandera": "https://flagcdn.com/w320/kr.png", "cuerpoTecnico": { "directorTecnico": "Hong Myung-bo" }, "jugadores": [] },
+    { "id": "CZE", "nombre": "República Checa", "grupo": "A", "bandera": "https://flagcdn.com/w320/cz.png", "cuerpoTecnico": { "directorTecnico": "Ivan Hašek" }, "jugadores": [] },
+
+    { "id": "CAN", "nombre": "Canadá", "grupo": "B", "bandera": "https://flagcdn.com/w320/ca.png", "cuerpoTecnico": { "directorTecnico": "Jesse Marsch" }, "jugadores": [] },
+    { "id": "BIH", "nombre": "Bosnia y Herzegovina", "grupo": "B", "bandera": "https://flagcdn.com/w320/ba.png", "cuerpoTecnico": { "directorTecnico": "Sergej Barbarez" }, "jugadores": [] },
+    { "id": "QAT", "nombre": "Catar", "grupo": "B", "bandera": "https://flagcdn.com/w320/qa.png", "cuerpoTecnico": { "directorTecnico": "Tintín Márquez" }, "jugadores": [] },
+    { "id": "SUI", "nombre": "Suiza", "grupo": "B", "bandera": "https://flagcdn.com/w320/ch.png", "cuerpoTecnico": { "directorTecnico": "Murat Yakin" }, "jugadores": [] },
+
+    { "id": "BRA", "nombre": "Brasil", "grupo": "C", "bandera": "https://flagcdn.com/w320/br.png", "cuerpoTecnico": { "directorTecnico": "Dorival Júnior" }, "jugadores": [
+        { "dorsal": 1, "nombre": "Alisson Becker", "posicion": "Arquero" },
+        { "dorsal": 4, "nombre": "Marquinhos", "posicion": "Defensor" },
+        { "dorsal": 3, "nombre": "Éder Militão", "posicion": "Defensor" },
+        { "dorsal": 6, "nombre": "Guilherme Arana", "posicion": "Defensor" },
+        { "dorsal": 5, "nombre": "Bruno Guimarães", "posicion": "Mediocampista" },
+        { "dorsal": 15, "nombre": "João Gomes", "posicion": "Mediocampista" },
+        { "dorsal": 10, "nombre": "Lucas Paquetá", "posicion": "Mediocampista" },
+        { "dorsal": 7, "nombre": "Vinícius Júnior", "posicion": "Delantero" },
+        { "dorsal": 11, "nombre": "Rodrygo Goes", "posicion": "Delantero" },
+        { "dorsal": 9, "nombre": "Endrick", "posicion": "Delantero" },
+        { "dorsal": 22, "nombre": "Raphinha", "posicion": "Delantero" }
+    ] },
+    { "id": "MAR", "nombre": "Marruecos", "grupo": "C", "bandera": "https://flagcdn.com/w320/ma.png", "cuerpoTecnico": { "directorTecnico": "Walid Regragui" }, "jugadores": [] },
+    { "id": "HAI", "nombre": "Haití", "grupo": "C", "bandera": "https://flagcdn.com/w320/ht.png", "cuerpoTecnico": { "directorTecnico": "Sébastien Migné" }, "jugadores": [] },
+    { "id": "SCO", "nombre": "Escocia", "grupo": "C", "bandera": "https://flagcdn.com/w320/gb-sct.png", "cuerpoTecnico": { "directorTecnico": "Steve Clarke" }, "jugadores": [] },
+
+    { "id": "USA", "nombre": "Estados Unidos", "grupo": "D", "bandera": "https://flagcdn.com/w320/us.png", "cuerpoTecnico": { "directorTecnico": "Mauricio Pochettino" }, "jugadores": [] },
+    { "id": "PAR", "nombre": "Paraguay", "grupo": "D", "bandera": "https://flagcdn.com/w320/py.png", "cuerpoTecnico": { "directorTecnico": "Gustavo Alfaro" }, "jugadores": [] },
+    { "id": "AUS", "nombre": "Australia", "grupo": "D", "bandera": "https://flagcdn.com/w320/au.png", "cuerpoTecnico": { "directorTecnico": "Tony Popovic" }, "jugadores": [] },
+    { "id": "TUR", "nombre": "Turquía", "grupo": "D", "bandera": "https://flagcdn.com/w320/tr.png", "cuerpoTecnico": { "directorTecnico": "Vincenzo Montella" }, "jugadores": [] },
+
+    { "id": "GER", "nombre": "Alemania", "grupo": "E", "bandera": "https://flagcdn.com/w320/de.png", "cuerpoTecnico": { "directorTecnico": "Julian Nagelsmann" }, "jugadores": [
+        { "dorsal": 1, "nombre": "Marc-André ter Stegen", "posicion": "Arquero" },
+        { "dorsal": 22, "nombre": "Antonio Rüdiger", "posicion": "Defensor" },
+        { "dorsal": 4, "nombre": "Jonathan Tah", "posicion": "Defensor" },
+        { "dorsal": 18, "nombre": "Maximilian Mittelstädt", "posicion": "Defensor" },
+        { "dorsal": 6, "nombre": "Joshua Kimmich", "posicion": "Defensor" },
+        { "dorsal": 23, "nombre": "Robert Andrich", "posicion": "Mediocampista" },
+        { "dorsal": 13, "nombre": "Pascal Groß", "posicion": "Mediocampista" },
+        { "dorsal": 10, "nombre": "Jamal Musiala", "posicion": "Delantero" },
+        { "dorsal": 17, "nombre": "Florian Wirtz", "posicion": "Delantero" },
+        { "dorsal": 19, "nombre": "Leroy Sané", "posicion": "Delantero" },
+        { "dorsal": 7, "nombre": "Kai Havertz", "posicion": "Delantero" }
+    ] },
+    { "id": "CUW", "nombre": "Curazao", "grupo": "E", "bandera": "https://flagcdn.com/w320/cw.png", "cuerpoTecnico": { "directorTecnico": "Dick Advocaat" }, "jugadores": [] },
+    { "id": "CIV", "nombre": "Costa de Marfil", "grupo": "E", "bandera": "https://flagcdn.com/w320/ci.png", "cuerpoTecnico": { "directorTecnico": "Emerse Faé" }, "jugadores": [] },
+    { "id": "ECU", "nombre": "Ecuador", "grupo": "E", "bandera": "https://flagcdn.com/w320/ec.png", "cuerpoTecnico": { "directorTecnico": "Sebastián Beccacece" }, "jugadores": [] },
+
+    { "id": "NED", "nombre": "Países Bajos", "grupo": "F", "bandera": "https://flagcdn.com/w320/nl.png", "cuerpoTecnico": { "directorTecnico": "Ronald Koeman" }, "jugadores": [] },
+    { "id": "JPN", "nombre": "Japón", "grupo": "F", "bandera": "https://flagcdn.com/w320/jp.png", "cuerpoTecnico": { "directorTecnico": "Hajime Moriyasu" }, "jugadores": [] },
+    { "id": "SWE", "nombre": "Suecia", "grupo": "F", "bandera": "https://flagcdn.com/w320/se.png", "cuerpoTecnico": { "directorTecnico": "Jon Dahl Tomasson" }, "jugadores": [] },
+    { "id": "TUN", "nombre": "Túnez", "grupo": "F", "bandera": "https://flagcdn.com/w320/tn.png", "cuerpoTecnico": { "directorTecnico": "Faouzi Benzarti" }, "jugadores": [] },
+
+    { "id": "BEL", "nombre": "Bélgica", "grupo": "G", "bandera": "https://flagcdn.com/w320/be.png", "cuerpoTecnico": { "directorTecnico": "Domenico Tedesco" }, "jugadores": [] },
+    { "id": "EGY", "nombre": "Egipto", "grupo": "G", "bandera": "https://flagcdn.com/w320/eg.png", "cuerpoTecnico": { "directorTecnico": "Hossam Hassan" }, "jugadores": [] },
+    { "id": "IRN", "nombre": "Irán", "grupo": "G", "bandera": "https://flagcdn.com/w320/ir.png", "cuerpoTecnico": { "directorTecnico": "Amir Ghalenoei" }, "jugadores": [] },
+    { "id": "NZL", "nombre": "Nueva Zelanda", "grupo": "G", "bandera": "https://flagcdn.com/w320/nz.png", "cuerpoTecnico": { "directorTecnico": "Darren Bazeley" }, "jugadores": [] },
+
+    { "id": "ESP", "nombre": "España", "grupo": "H", "bandera": "https://flagcdn.com/w320/es.png", "cuerpoTecnico": { "directorTecnico": "Luis de la Fuente" }, "jugadores": [
+        { "dorsal": 1, "nombre": "David Raya", "posicion": "Arquero" },
+        { "dorsal": 14, "nombre": "Aymeric Laporte", "posicion": "Defensor" },
+        { "dorsal": 3, "nombre": "Robin Le Normand", "posicion": "Defensor" },
+        { "dorsal": 2, "nombre": "Dani Carvajal", "posicion": "Defensor" },
+        { "dorsal": 24, "nombre": "Marc Cucurella", "posicion": "Defensor" },
+        { "dorsal": 16, "nombre": "Rodri Hernández", "posicion": "Mediocampista" },
+        { "dorsal": 8, "nombre": "Pedri González", "posicion": "Mediocampista" },
+        { "dorsal": 10, "nombre": "Dani Olmo", "posicion": "Mediocampista" },
+        { "dorsal": 17, "nombre": "Lamine Yamal", "posicion": "Delantero" },
+        { "dorsal": 11, "nombre": "Nico Williams", "posicion": "Delantero" },
+        { "dorsal": 7, "nombre": "Álvaro Morata", "posicion": "Delantero" }
+    ] },
+    { "id": "CPV", "nombre": "Cabo Verde", "grupo": "H", "bandera": "https://flagcdn.com/w320/cv.png", "cuerpoTecnico": { "directorTecnico": "Bubista" }, "jugadores": [] },
+    { "id": "KSA", "nombre": "Arabia Saudita", "grupo": "H", "bandera": "https://flagcdn.com/w320/sa.png", "cuerpoTecnico": { "directorTecnico": "Hervé Renard" }, "jugadores": [] },
+    { "id": "URU", "nombre": "Uruguay", "grupo": "H", "bandera": "https://flagcdn.com/w320/uy.png", "cuerpoTecnico": { "directorTecnico": "Marcelo Bielsa" }, "jugadores": [
+        { "dorsal": 1, "nombre": "Sergio Rochet", "posicion": "Arquero" },
+        { "dorsal": 2, "nombre": "José María Giménez", "posicion": "Defensor" },
+        { "dorsal": 3, "nombre": "Sebastián Cáceres", "posicion": "Defensor" },
+        { "dorsal": 16, "nombre": "Mathías Olivera", "posicion": "Defensor" },
+        { "dorsal": 4, "nombre": "Ronald Araújo", "posicion": "Defensor" },
+        { "dorsal": 15, "nombre": "Federico Valverde", "posicion": "Mediocampista" },
+        { "dorsal": 5, "nombre": "Manuel Ugarte", "posicion": "Mediocampista" },
+        { "dorsal": 7, "nombre": "Nicolás de la Cruz", "posicion": "Mediocampista" },
+        { "dorsal": 10, "nombre": "Giorgian de Arrascaeta", "posicion": "Mediocampista" },
+        { "dorsal": 19, "nombre": "Darwin Núñez", "posicion": "Delantero" },
+        { "dorsal": 11, "nombre": "Facundo Pellistri", "posicion": "Delantero" }
+    ] },
+
+    { "id": "FRA", "nombre": "Francia", "grupo": "I", "bandera": "https://flagcdn.com/w320/fr.png", "cuerpoTecnico": { "directorTecnico": "Didier Deschamps" }, "jugadores": [
+        { "dorsal": 16, "nombre": "Mike Maignan", "posicion": "Arquero" },
+        { "dorsal": 4, "nombre": "Dayot Upamecano", "posicion": "Defensor" },
+        { "dorsal": 22, "nombre": "Theo Hernández", "posicion": "Defensor" },
+        { "dorsal": 5, "nombre": "Jules Koundé", "posicion": "Defensor" },
+        { "dorsal": 2, "nombre": "Benjamin Pavard", "posicion": "Defensor" },
+        { "dorsal": 8, "nombre": "Aurélien Tchouaméni", "posicion": "Mediocampista" },
+        { "dorsal": 14, "nombre": "Adrien Rabiot", "posicion": "Mediocampista" },
+        { "dorsal": 6, "nombre": "Eduardo Camavinga", "posicion": "Mediocampista" },
+        { "dorsal": 7, "nombre": "Antoine Griezmann", "posicion": "Delantero" },
+        { "dorsal": 10, "nombre": "Kylian Mbappé", "posicion": "Delantero" },
+        { "dorsal": 11, "nombre": "Ousmane Dembélé", "posicion": "Delantero" }
+    ] },
+    { "id": "SEN", "nombre": "Senegal", "grupo": "I", "bandera": "https://flagcdn.com/w320/sn.png", "cuerpoTecnico": { "directorTecnico": "Aliou Cissé" }, "jugadores": [] },
+    { "id": "IRQ", "nombre": "Irak", "grupo": "I", "bandera": "https://flagcdn.com/w320/iq.png", "cuerpoTecnico": { "directorTecnico": "Jesús Casas" }, "jugadores": [] },
+    { "id": "NOR", "nombre": "Noruega", "grupo": "I", "bandera": "https://flagcdn.com/w320/no.png", "cuerpoTecnico": { "directorTecnico": "Ståle Solbakken" }, "jugadores": [] },
+
+    { "id": "ARG", "nombre": "Argentina", "grupo": "J", "bandera": "https://flagcdn.com/w320/ar.png", "cuerpoTecnico": { "directorTecnico": "Lionel Scaloni" }, "jugadores": [
+      { "dorsal": 23, "nombre": "Emiliano Martínez", "posicion": "Arquero" },
+      { "dorsal": 13, "nombre": "Cristian Romero", "posicion": "Defensor" },
+      { "dorsal": 19, "nombre": "Nicolás Otamendi", "posicion": "Defensor" },
+      { "dorsal": 7, "nombre": "Rodrigo De Paul", "posicion": "Mediocampista" },
+      { "dorsal": 8, "nombre": "Enzo Fernández", "posicion": "Mediocampista" },
+      { "dorsal": 10, "nombre": "Lionel Messi", "posicion": "Delantero" },
+      { "dorsal": 9, "nombre": "Julián Álvarez", "posicion": "Delantero" }
+    ]},
+    { "id": "ALG", "nombre": "Argelia", "grupo": "J", "bandera": "https://flagcdn.com/w320/dz.png", "cuerpoTecnico": { "directorTecnico": "Vladimir Petković" }, "jugadores": [] },
+    { "id": "AUT", "nombre": "Austria", "grupo": "J", "bandera": "https://flagcdn.com/w320/at.png", "cuerpoTecnico": { "directorTecnico": "Ralf Rangnick" }, "jugadores": [] },
+    { "id": "JOR", "nombre": "Jordania", "grupo": "J", "bandera": "https://flagcdn.com/w320/jo.png", "cuerpoTecnico": { "directorTecnico": "Jamal Sellami" }, "jugadores": [] },
+
+    { "id": "POR", "nombre": "Portugal", "grupo": "K", "bandera": "https://flagcdn.com/w320/pt.png", "cuerpoTecnico": { "directorTecnico": "Roberto Martínez" }, "jugadores": [
+        { "dorsal": 22, "nombre": "Diogo Costa", "posicion": "Arquero" },
+        { "dorsal": 4, "nombre": "Rúben Dias", "posicion": "Defensor" },
+        { "dorsal": 14, "nombre": "Gonçalo Inácio", "posicion": "Defensor" },
+        { "dorsal": 19, "nombre": "Nuno Mendes", "posicion": "Defensor" },
+        { "dorsal": 2, "nombre": "Nelson Semedo", "posicion": "Defensor" },
+        { "dorsal": 6, "nombre": "João Palhinha", "posicion": "Mediocampista" },
+        { "dorsal": 8, "nombre": "Bruno Fernandes", "posicion": "Mediocampista" },
+        { "dorsal": 10, "nombre": "Bernardo Silva", "posicion": "Mediocampista" },
+        { "dorsal": 23, "nombre": "Vitinha", "posicion": "Mediocampista" },
+        { "dorsal": 7, "nombre": "Cristiano Ronaldo", "posicion": "Delantero" },
+        { "dorsal": 11, "nombre": "João Félix", "posicion": "Delantero" },
+        { "dorsal": 17, "nombre": "Rafael Leão", "posicion": "Delantero" }
+    ] },
+    { "id": "COD", "nombre": "RD Congo", "grupo": "K", "bandera": "https://flagcdn.com/w320/cd.png", "cuerpoTecnico": { "directorTecnico": "Sébastien Desabre" }, "jugadores": [] },
+    { "id": "UZB", "nombre": "Uzbekistán", "grupo": "K", "bandera": "https://flagcdn.com/w320/uz.png", "cuerpoTecnico": { "directorTecnico": "Srečko Katanec" }, "jugadores": [] },
+    { "id": "COL", "nombre": "Colombia", "grupo": "K", "bandera": "https://flagcdn.com/w320/co.png", "cuerpoTecnico": { "directorTecnico": "Néstor Lorenzo" }, "jugadores": [] },
+
+    { "id": "ENG", "nombre": "Inglaterra", "grupo": "L", "bandera": "https://flagcdn.com/w320/gb-eng.png", "cuerpoTecnico": { "directorTecnico": "Thomas Tuchel" }, "jugadores": [
+        { "dorsal": 1, "nombre": "Jordan Pickford", "posicion": "Arquero" },
+        { "dorsal": 5, "nombre": "John Stones", "posicion": "Defensor" },
+        { "dorsal": 6, "nombre": "Marc Guéhi", "posicion": "Defensor" },
+        { "dorsal": 12, "nombre": "Kieran Trippier", "posicion": "Defensor" },
+        { "dorsal": 4, "nombre": "Declan Rice", "posicion": "Mediocampista" },
+        { "dorsal": 26, "nombre": "Kobbie Mainoo", "posicion": "Mediocampista" },
+        { "dorsal": 10, "nombre": "Jude Bellingham", "posicion": "Mediocampista" },
+        { "dorsal": 7, "nombre": "Bukayo Saka", "posicion": "Delantero" },
+        { "dorsal": 11, "nombre": "Phil Foden", "posicion": "Delantero" },
+        { "dorsal": 9, "nombre": "Harry Kane", "posicion": "Delantero" },
+        { "dorsal": 21, "nombre": "Cole Palmer", "posicion": "Delantero" }
+    ] },
+    { "id": "CRO", "nombre": "Croacia", "grupo": "L", "bandera": "https://flagcdn.com/w320/hr.png", "cuerpoTecnico": { "directorTecnico": "Zlatko Dalić" }, "jugadores": [] },
+    { "id": "GHA", "nombre": "Ghana", "grupo": "L", "bandera": "https://flagcdn.com/w320/gh.png", "cuerpoTecnico": { "directorTecnico": "Otto Addo" }, "jugadores": [] },
+    { "id": "PAN", "nombre": "Panamá", "grupo": "L", "bandera": "https://flagcdn.com/w320/pa.png", "cuerpoTecnico": { "directorTecnico": "Thomas Christiansen" }, "jugadores": [] }
+  ],
+  "partidos": [
+    { "id": "p1", "fecha": "2026-06-11", "hora": "15:00", "estadio": "Estadio Azteca", "local": "MEX", "visitante": "RSA", "grupo": "A" },
+    { "id": "p2", "fecha": "2026-06-11", "hora": "22:00", "estadio": "Estadio Guadalajara", "local": "KOR", "visitante": "CZE", "grupo": "A" },
+    { "id": "p3", "fecha": "2026-06-12", "hora": "15:00", "estadio": "Estadio Toronto", "local": "CAN", "visitante": "BIH", "grupo": "B" },
+    { "id": "p4", "fecha": "2026-06-12", "hora": "21:00", "estadio": "Estadio Los Ángeles", "local": "USA", "visitante": "PAR", "grupo": "D" },
+    { "id": "p5", "fecha": "2026-06-13", "hora": "18:00", "estadio": "Estadio Nueva York Nueva Jersey", "local": "BRA", "visitante": "MAR", "grupo": "C" },
+    { "id": "p6", "fecha": "2026-06-16", "hora": "21:00", "estadio": "Estadio Kansas City", "local": "ARG", "visitante": "ALG", "grupo": "J" }
+  ]
+}
