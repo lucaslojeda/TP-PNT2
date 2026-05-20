@@ -14,34 +14,27 @@
 
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStoreUsuario } from '@/stores/storeUsuario';
 
 const usuario = ref('');
 const contrasena = ref('');
 const isError = ref(false);
 const router = useRouter();
-
+const storeUsuario = useStoreUsuario();
 const credencialesIncompletas = computed(() => {
   return usuario.value === '' || contrasena.value === '';
 });
 
 function iniciarSesion() {
-  if (usuario.value === 'admin' && contrasena.value === 'admin123') {
-      isError.value = false;
-      
-      // Guardar datos del usuario en localStorage
-      const usuarioData = {
-        nombre: usuario.value,
-        foto: null,
-        puntos: 0
-      };
-      localStorage.setItem('usuarioProde', JSON.stringify(usuarioData));
-      
-      router.push('/home')
+  const ingresoExitoso = storeUsuario.iniciarSesion(usuario.value, contrasena.value);
+
+  if (ingresoExitoso) {
+    isError.value = false;
+    router.push('/home');
   } else {
     isError.value = true;
-
   }
-}
+  }
 
 </script>
 
