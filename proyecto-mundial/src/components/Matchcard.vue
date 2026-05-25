@@ -32,34 +32,46 @@
     <div class="prediction-section">
       <input
         v-model="golesLocal"
-        type="number"
-        min="0"
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]*"
         class="score-input"
-        placeholder="0"
+        placeholder=""
+        :disabled="prediccionGuardada"
+        @input="validarGolesLocal"
       />
 
       <span class="score-separator">-</span>
 
       <input
         v-model="golesVisitante"
-        type="number"
-        min="0"
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]*"
         class="score-input"
-        placeholder="0"
+        placeholder=""
+        :disabled="prediccionGuardada"
+        @input="validarGolesVisitante"
       />
     </div>
 
     <p class="prediction-status">{{ estadoPrediccion }}</p>
 
-    <button class="save-button" @click="guardarPrediccion">
-      Guardar predicción
-    </button>
+    <button class="save-button" :disabled="prediccionGuardada" @click="guardarPrediccion">
+  Guardar predicción
+</button>
+    <button v-if="prediccionGuardada" class="reset-button" @click="reiniciarPrediccion">
+    Reiniciar predicción
+  </button>
   </article>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue'
 import datosProde from '@/dataProde.json'
+import { usePrediccionesStore } from '@/stores/storePredicciones'
+
+const prediccionesStore = usePrediccionesStore()
 
 const props = defineProps({
   partido: {
@@ -71,6 +83,22 @@ const props = defineProps({
 const golesLocal = ref('')
 const golesVisitante = ref('')
 const prediccionGuardada = ref(false)
+
+const prediccionExistente = prediccionesStore.obtenerPrediccion(props.partido.id)
+
+const validarGolesLocal = () => {
+  golesLocal.value = golesLocal.value.replace(/\D/g, '')
+}
+
+const validarGolesVisitante = () => {
+  golesVisitante.value = golesVisitante.value.replace(/\D/g, '')
+}
+
+if (prediccionExistente) {
+  golesLocal.value = prediccionExistente.golesLocal
+  golesVisitante.value = prediccionExistente.golesVisitante
+  prediccionGuardada.value = true
+}
 
 const equipoLocal = computed(() => {
   return datosProde.paises.find(pais => pais.id === props.partido.local)
@@ -102,20 +130,30 @@ const estadoPrediccion = computed(() => {
 })
 
 const guardarPrediccion = () => {
+  if (prediccionGuardada.value) {
+    return
+  }
+
   if (golesLocal.value === '' || golesVisitante.value === '') {
     prediccionGuardada.value = false
     return
   }
 
-  prediccionGuardada.value = true
+  prediccionesStore.guardarPrediccion(
+    props.partido,
+    golesLocal.value,
+    golesVisitante.value
+  )
 
-  console.log({
-    partidoId: props.partido.id,
-    local: props.partido.local,
-    visitante: props.partido.visitante,
-    golesLocal: golesLocal.value,
-    golesVisitante: golesVisitante.value
-  })
+  prediccionGuardada.value = true
+}
+
+const reiniciarPrediccion = () => {
+  prediccionesStore.reiniciarPrediccion(props.partido.id)
+
+  golesLocal.value = ''
+  golesVisitante.value = ''
+  prediccionGuardada.value = false
 }
 </script>
 
@@ -235,6 +273,24 @@ const guardarPrediccion = () => {
   transition: all 0.2s ease;
 }
 
+.save-button:disabled {
+  background-color: #555;
+  color: #aaa;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.save-button:disabled:hover {
+  background-color: #555;
+  transform: none;
+}
+
+.score-input:disabled {
+  background-color: #222;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
 .save-button:hover {
   background-color: #00e060;
   transform: translateY(-1px);
@@ -259,5 +315,23 @@ const guardarPrediccion = () => {
   .versus {
     text-align: center;
   }
+}
+
+.reset-button {
+  display: block;
+  margin: 10px auto 0;
+  background-color: transparent;
+  color: #ff5c5c;
+  border: 1px solid #ff5c5c;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-button:hover {
+  background-color: #ff5c5c;
+  color: #111;
 }
 </style>
