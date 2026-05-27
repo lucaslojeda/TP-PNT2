@@ -129,7 +129,7 @@ const estadoPrediccion = computed(() => {
   return 'Sin predicción'
 })
 
-const guardarPrediccion = () => {
+const guardarPrediccion = async () => {
   if (prediccionGuardada.value) {
     return
   }
@@ -139,7 +139,7 @@ const guardarPrediccion = () => {
     return
   }
 
-  prediccionesStore.guardarPrediccion(
+  await prediccionesStore.guardarPrediccion(
     props.partido,
     golesLocal.value,
     golesVisitante.value
@@ -148,8 +148,8 @@ const guardarPrediccion = () => {
   prediccionGuardada.value = true
 }
 
-const reiniciarPrediccion = () => {
-  prediccionesStore.reiniciarPrediccion(props.partido.id)
+const reiniciarPrediccion = async () => {
+  await prediccionesStore.reiniciarPrediccion(props.partido.id)
 
   golesLocal.value = ''
   golesVisitante.value = ''

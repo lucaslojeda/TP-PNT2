@@ -67,6 +67,9 @@
         </div>
       </div>
 
+      <!-- Sección de predicciones guardadas -->
+      <PrediccionesGuardadas />
+
       <!-- Sección de acciones -->
       <div class="acciones">
         <button @click="desloguearse" class="btn-desloguear">
@@ -81,6 +84,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Sidebar from '@/components/Sidebar.vue';
+import PrediccionesGuardadas from '@/components/PrediccionesGuardadas.vue';
 
 const router = useRouter();
 
@@ -163,7 +167,7 @@ window.addPuntosUsuario = (cantidad) => {
 .perfil-content {
   flex: 1;
   padding: 40px;
-  margin-left: 0;
+  margin-left: 250px;
 }
 
 h1 {
