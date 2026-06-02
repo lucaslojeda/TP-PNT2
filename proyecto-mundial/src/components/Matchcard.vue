@@ -67,7 +67,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import datosProde from '@/dataProde.json'
 import { usePrediccionesStore } from '@/stores/storePredicciones'
 
@@ -84,7 +84,25 @@ const golesLocal = ref('')
 const golesVisitante = ref('')
 const prediccionGuardada = ref(false)
 
-const prediccionExistente = prediccionesStore.obtenerPrediccion(props.partido.id)
+const prediccionExistente = computed(() => {
+  return prediccionesStore.obtenerPrediccion(props.partido.id)
+})
+
+watch(
+  prediccionExistente,
+  (prediccion) => {
+    if (prediccion) {
+      golesLocal.value = String(prediccion.golesLocal)
+      golesVisitante.value = String(prediccion.golesVisitante)
+      prediccionGuardada.value = true
+    } else {
+      golesLocal.value = ''
+      golesVisitante.value = ''
+      prediccionGuardada.value = false
+    }
+  },
+  { immediate: true }
+)
 
 const validarGolesLocal = () => {
   golesLocal.value = golesLocal.value.replace(/\D/g, '')
@@ -92,12 +110,6 @@ const validarGolesLocal = () => {
 
 const validarGolesVisitante = () => {
   golesVisitante.value = golesVisitante.value.replace(/\D/g, '')
-}
-
-if (prediccionExistente) {
-  golesLocal.value = prediccionExistente.golesLocal
-  golesVisitante.value = prediccionExistente.golesVisitante
-  prediccionGuardada.value = true
 }
 
 const equipoLocal = computed(() => {
@@ -110,7 +122,6 @@ const equipoVisitante = computed(() => {
 
 const fechaFormateada = computed(() => {
   const partesFecha = props.partido.fecha.split('-')
-  const anio = partesFecha[0]
   const mes = partesFecha[1]
   const dia = partesFecha[2]
 
@@ -130,7 +141,8 @@ const estadoPrediccion = computed(() => {
 })
 
 const guardarPrediccion = async () => {
-  if (prediccionGuardada.value) {
+  if (prediccionExistente.value) {
+    prediccionGuardada.value = true
     return
   }
 

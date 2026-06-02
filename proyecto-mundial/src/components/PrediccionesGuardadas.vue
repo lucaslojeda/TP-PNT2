@@ -78,7 +78,7 @@
             @click="iniciarEdicion(prediccion)"
             class="btn-editar-prediccion"
           >
-            ✏️ Editar
+             Editar
           </button>
 
           <div v-else class="btn-grupo">
@@ -100,7 +100,7 @@
             @click="eliminarPrediccion(prediccion.partidoId)"
             class="btn-eliminar"
           >
-            🗑️ Eliminar
+             Eliminar
           </button>
         </div>
       </div>

@@ -44,15 +44,21 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 import Sidebar from '@/components/Sidebar.vue'
 import Matchcard from '@/components/Matchcard.vue'
 import FechaSelector from '@/components/FechaSelector.vue'
 
 import datosProde from '@/dataProde.json'
+import { usePrediccionesStore } from '@/stores/storePredicciones'
 
 const fechaSeleccionada = ref(1)
+const prediccionesStore = usePrediccionesStore()
+
+onMounted(async () => {
+  await prediccionesStore.cargarPredicciones()
+})
 
 const partidosFiltrados = computed(() => {
   return datosProde.partidos
