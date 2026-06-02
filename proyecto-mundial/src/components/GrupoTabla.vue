@@ -45,17 +45,26 @@
 <script setup>
 import { computed } from 'vue'
 import { useFaseGruposStore } from '@/stores/storeFaseDeGrupos'
+import { useResultadosRealesStore } from '@/stores/storeResultadosReales'
 
 const props = defineProps({
   grupo: {
     type: String,
     required: true
+  },
+  modo: {
+    type: String,
+    default: 'predicciones'
   }
 })
 
 const faseGruposStore = useFaseGruposStore()
+const resultadosRealesStore = useResultadosRealesStore()
 
 const tablaGrupo = computed(() => {
+  if (props.modo === 'real') {
+    return resultadosRealesStore.calcularTablaGrupo(props.grupo)
+  }
   return faseGruposStore.calcularTablaGrupo(props.grupo)
 })
 </script>

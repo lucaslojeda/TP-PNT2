@@ -56,10 +56,6 @@ import { usePrediccionesStore } from '@/stores/storePredicciones'
 const fechaSeleccionada = ref(1)
 const prediccionesStore = usePrediccionesStore()
 
-onMounted(async () => {
-  await prediccionesStore.cargarPredicciones()
-})
-
 const partidosFiltrados = computed(() => {
   return datosProde.partidos
     .filter(partido => partido.fechaGrupo === fechaSeleccionada.value)
