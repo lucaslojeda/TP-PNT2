@@ -65,6 +65,10 @@ const partidosFiltrados = computed(() => {
       return fechaA - fechaB
     })
 })
+
+onMounted(() => {
+  prediccionesStore.cargarPredicciones()
+})
 </script>
 
 <style scoped>

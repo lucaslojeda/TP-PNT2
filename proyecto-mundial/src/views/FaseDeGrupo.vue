@@ -38,14 +38,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import GrupoTabla from '@/components/GrupoTabla.vue'
 import { useResultadosRealesStore } from '@/stores/storeResultadosReales'
+import { usePrediccionesStore } from '@/stores/storePredicciones'
 
 const grupos = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L']
 const modoActivo = ref('predicciones')
 const resultadosRealesStore = useResultadosRealesStore()
+const prediccionesStore = usePrediccionesStore()
 const cargando = ref(false)
 
 const cambiarAReal = async () => {
@@ -56,6 +58,10 @@ const cambiarAReal = async () => {
     cargando.value = false
   }
 }
+
+onMounted(() => {
+  prediccionesStore.cargarPredicciones()
+})
 </script>
 
 <style scoped>
