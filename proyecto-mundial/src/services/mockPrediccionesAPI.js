@@ -1,62 +1,107 @@
 // MOCK API para predicciones
-// Simula un servidor guardando datos en localStorage
+// Guarda las predicciones en MockAPI
 
-const STORAGE_KEY = 'prediccionesProde'
+const API_URL = 'https://6a29a9d0f59cb8f65f1d75f5.mockapi.io/predicciones'
 
 export const mockPrediccionesAPI = {
   // Obtener todas las predicciones del usuario
-  obtenerPredicciones: () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const datos = localStorage.getItem(STORAGE_KEY)
-        resolve(datos ? JSON.parse(datos) : {})
-      }, 100) // Simular latencia de red
+  obtenerPredicciones: async () => {
+    const response = await fetch(API_URL)
+
+    if (!response.ok) {
+      throw new Error('Error al obtener predicciones')
+    }
+
+    const predicciones = await response.json()
+
+    const prediccionesPorPartido = {}
+
+    predicciones.forEach((prediccion) => {
+      prediccionesPorPartido[prediccion.partidoId] = prediccion
     })
+
+    return prediccionesPorPartido
   },
 
   // Guardar una predicción
-  guardarPrediccion: (prediccion) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        try {
-          const predicciones = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
-          predicciones[prediccion.partidoId] = {
-            ...prediccion,
-            fechaGuardado: new Date().toISOString()
-          }
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(predicciones))
-          resolve(prediccion)
-        } catch (error) {
-          reject(error)
-        }
-      }, 100)
-    })
-  },
+  guardarPrediccion: async (prediccion) => {
+    const predicciones = await mockPrediccionesAPI.obtenerPredicciones()
+    const prediccionExistente = predicciones[prediccion.partidoId]
 
-  // Eliminar una predicción
-  eliminarPrediccion: (partidoId) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const predicciones = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
-        delete predicciones[partidoId]
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(predicciones))
-        resolve()
-      }, 100)
+    const prediccionConFecha = {
+      ...prediccion,
+      fechaGuardado: new Date().toISOString()
+    }
+
+    // Si ya existe una predicción para ese partido, la actualizamos
+    if (prediccionExistente?.id) {
+      return await mockPrediccionesAPI.actualizarPrediccion(
+        prediccionExistente.id,
+        prediccionConFecha
+      )
+    }
+
+    // Si no existe, creamos una nueva
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(prediccionConFecha)
     })
+
+    if (!response.ok) {
+      throw new Error('Error al guardar predicción')
+    }
+
+    return await response.json()
   },
 
   // Actualizar una predicción existente
-  actualizarPrediccion: (prediccion) => {
-    return mockPrediccionesAPI.guardarPrediccion(prediccion)
+  actualizarPrediccion: async (id, prediccion) => {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(prediccion)
+    })
+
+    if (!response.ok) {
+      throw new Error('Error al actualizar predicción')
+    }
+
+    return await response.json()
+  },
+
+  // Eliminar una predicción
+  eliminarPrediccion: async (partidoId) => {
+    const predicciones = await mockPrediccionesAPI.obtenerPredicciones()
+    const prediccionExistente = predicciones[partidoId]
+
+    if (!prediccionExistente?.id) {
+      return
+    }
+
+    const response = await fetch(`${API_URL}/${prediccionExistente.id}`, {
+      method: 'DELETE'
+    })
+
+    if (!response.ok) {
+      throw new Error('Error al eliminar predicción')
+    }
   },
 
   // Limpiar todas las predicciones
-  limpiarTodas: () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        localStorage.removeItem(STORAGE_KEY)
-        resolve()
-      }, 100)
-    })
+  limpiarTodas: async () => {
+    const response = await fetch(API_URL)
+
+    if (!response.ok) {
+      throw new Error('Error al obtener predicciones')
+    }
+
+    const predicciones = await response.json()
+
+    for (const prediccion of predicciones) {
+      await fetch(`${API_URL}/${prediccion.id}`, {
+        method: 'DELETE'
+      })
+    }
   }
 }

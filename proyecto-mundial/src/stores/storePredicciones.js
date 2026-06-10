@@ -2,16 +2,25 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { mockPrediccionesAPI } from '@/services/mockPrediccionesAPI'
 
+const USUARIO_ID = 'usuario1'
+
 export const usePrediccionesStore = defineStore('predicciones', () => {
   const predicciones = ref({})
   const cargando = ref(false)
 
-  // Cargar predicciones desde la MOCK API
   const cargarPredicciones = async () => {
     cargando.value = true
+
     try {
       const datos = await mockPrediccionesAPI.obtenerPredicciones()
-      predicciones.value = datos
+
+      predicciones.value = {}
+
+      Object.values(datos).forEach((prediccion) => {
+        if (prediccion.userId === USUARIO_ID) {
+          predicciones.value[prediccion.partidoId] = prediccion
+        }
+      })
     } catch (error) {
       console.error('Error al cargar predicciones:', error)
     } finally {
@@ -21,6 +30,7 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
 
   const guardarPrediccion = async (partido, golesLocal, golesVisitante) => {
     const prediccion = {
+      userId: USUARIO_ID,
       partidoId: partido.id,
       local: partido.local,
       visitante: partido.visitante,
@@ -31,17 +41,21 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
       golesLocal: Number(golesLocal),
       golesVisitante: Number(golesVisitante)
     }
-    
+
     try {
-      await mockPrediccionesAPI.guardarPrediccion(prediccion)
-      predicciones.value[partido.id] = prediccion
+      const prediccionGuardada = await mockPrediccionesAPI.guardarPrediccion(prediccion)
+
+      predicciones.value[partido.id] = prediccionGuardada
     } catch (error) {
       console.error('Error al guardar predicción:', error)
     }
   }
 
   const actualizarPrediccion = async (partido, golesLocal, golesVisitante) => {
+    const prediccionExistente = predicciones.value[partido.id]
+
     const prediccion = {
+      userId: USUARIO_ID,
       partidoId: partido.id,
       local: partido.local,
       visitante: partido.visitante,
@@ -52,10 +66,20 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
       golesLocal: Number(golesLocal),
       golesVisitante: Number(golesVisitante)
     }
-    
+
     try {
-      await mockPrediccionesAPI.actualizarPrediccion(prediccion)
-      predicciones.value[partido.id] = prediccion
+      if (prediccionExistente?.id) {
+        const prediccionActualizada = await mockPrediccionesAPI.actualizarPrediccion(
+          prediccionExistente.id,
+          prediccion
+        )
+
+        predicciones.value[partido.id] = prediccionActualizada
+      } else {
+        const prediccionGuardada = await mockPrediccionesAPI.guardarPrediccion(prediccion)
+
+        predicciones.value[partido.id] = prediccionGuardada
+      }
     } catch (error) {
       console.error('Error al actualizar predicción:', error)
     }
@@ -64,6 +88,7 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
   const reiniciarPrediccion = async (partidoId) => {
     try {
       await mockPrediccionesAPI.eliminarPrediccion(partidoId)
+
       delete predicciones.value[partidoId]
     } catch (error) {
       console.error('Error al eliminar predicción:', error)
@@ -81,6 +106,7 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
   const limpiarTodas = async () => {
     try {
       await mockPrediccionesAPI.limpiarTodas()
+
       predicciones.value = {}
     } catch (error) {
       console.error('Error al limpiar predicciones:', error)

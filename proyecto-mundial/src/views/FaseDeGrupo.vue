@@ -5,14 +5,32 @@
     <main class="fase-grupos-content">
       <header class="fase-grupos-header">
         <h1>Fase de grupos</h1>
-        <p>Consultá las posiciones de cada grupo según tus predicciones.</p>
+        <p>Consultá las posiciones de cada grupo.</p>
       </header>
 
-      <section class="grupos-grid">
+      <div class="tabs">
+        <button
+          :class="['tab', { activo: modoActivo === 'predicciones' }]"
+          @click="modoActivo = 'predicciones'"
+        >
+          Mis Predicciones
+        </button>
+        <button
+          :class="['tab', { activo: modoActivo === 'real' }]"
+          @click="cambiarAReal"
+        >
+          Resultados Reales
+        </button>
+      </div>
+
+      <p v-if="cargando" class="cargando">Cargando resultados...</p>
+
+      <section v-else class="grupos-grid">
         <GrupoTabla
           v-for="grupo in grupos"
           :key="grupo"
           :grupo="grupo"
+          :modo="modoActivo"
         />
       </section>
     </main>
@@ -20,10 +38,30 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import GrupoTabla from '@/components/GrupoTabla.vue'
+import { useResultadosRealesStore } from '@/stores/storeResultadosReales'
+import { usePrediccionesStore } from '@/stores/storePredicciones'
 
 const grupos = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L']
+const modoActivo = ref('predicciones')
+const resultadosRealesStore = useResultadosRealesStore()
+const prediccionesStore = usePrediccionesStore()
+const cargando = ref(false)
+
+const cambiarAReal = async () => {
+  modoActivo.value = 'real'
+  if (resultadosRealesStore.resultados.length === 0) {
+    cargando.value = true
+    await resultadosRealesStore.inicializar()
+    cargando.value = false
+  }
+}
+
+onMounted(() => {
+  prediccionesStore.cargarPredicciones()
+})
 </script>
 
 <style scoped>
@@ -60,6 +98,34 @@ const grupos = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L']
 .fase-grupos-header p {
   margin-top: 8px;
   color: #ccc;
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.tab {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  background-color: #1f1f1f;
+  color: #ccc;
+  transition: all 0.2s;
+}
+
+.tab.activo {
+  background-color: #00c853;
+  color: white;
+  font-weight: 700;
+}
+
+.cargando {
+  color: white;
+  font-size: 1.2rem;
 }
 
 .grupos-grid {
