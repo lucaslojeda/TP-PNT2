@@ -4,7 +4,6 @@
     <div class="perfil-content">
       <h1>Perfil</h1>
       
-      <!-- Sección de foto y nombre -->
       <div class="perfil-header">
         <div class="foto-container">
           <img 
@@ -55,11 +54,10 @@
         </div>
       </div>
 
-      <!-- Sección de puntos -->
       <div class="puntos-section">
         <div class="puntos-card">
           <h3>Puntos Acumulados</h3>
-          <p class="puntos-valor">{{ usuarioData.puntos }}</p>
+          <p class="puntos-valor">{{ resultadosStore.puntajeTotalUsuario }}</p>
           <p class="puntos-label">Puntos en total</p>
         </div>
         <div class="puntos-info">
@@ -67,10 +65,8 @@
         </div>
       </div>
 
-      <!-- Sección de predicciones guardadas -->
       <PrediccionesGuardadas />
 
-      <!-- Sección de acciones -->
       <div class="acciones">
         <button @click="desloguearse" class="btn-desloguear">
           🚪 Desloguear
@@ -86,29 +82,41 @@ import { useRouter } from 'vue-router';
 import Sidebar from '@/components/Sidebar.vue';
 import PrediccionesGuardadas from '@/components/PrediccionesGuardadas.vue';
 
+// 1. Importamos los stores necesarios para calcular tus puntos en vivo
+import { useResultadosRealesStore } from '@/stores/storeResultadosReales';
+import { usePrediccionesStore } from '@/stores/storePredicciones';
+
 const router = useRouter();
+
+// 2. Instanciamos ambos stores
+const resultadosStore = useResultadosRealesStore();
+const prediccionesStore = usePrediccionesStore();
 
 const usuarioData = ref({
   nombre: 'admin',
-  foto: null,
-  puntos: 0
+  foto: null
+  // Sacamos la propiedad 'puntos' fija de acá porque ahora la maneja Pinia
 });
 
 const editandoNombre = ref(false);
 const nuevoNombre = ref('');
 
-// Cargar datos del usuario desde localStorage
-onMounted(() => {
+// Cargar datos del usuario desde localStorage e inicializar stores
+onMounted(async () => {
+  // A) Cargamos la información estética del perfil (Nombre y foto)
   const datosGuardados = localStorage.getItem('usuarioProde');
   if (datosGuardados) {
     usuarioData.value = JSON.parse(datosGuardados);
   } else {
-    // Si no hay datos guardados, inicializar con valores por defecto
     guardarDatos();
   }
+
+  // B) Ejecutamos las llamadas asíncronas para que el calculador tenga data
+  await prediccionesStore.cargarPredicciones();
+  await resultadosStore.inicializar();
 });
 
-// Guardar datos en localStorage
+// Guardar datos estéticos en localStorage
 function guardarDatos() {
   localStorage.setItem('usuarioProde', JSON.stringify(usuarioData.value));
 }
@@ -146,14 +154,6 @@ function desloguearse() {
   localStorage.removeItem('usuarioProde');
   router.push('/');
 }
-
-// Función para agregar puntos (la usarás desde otras vistas)
-// ejemplo: addPuntos(10)
-window.addPuntosUsuario = (cantidad) => {
-  usuarioData.value.puntos += cantidad;
-  guardarDatos();
-};
-
 </script>
 
 <style scoped>

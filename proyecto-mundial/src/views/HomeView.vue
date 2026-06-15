@@ -26,15 +26,28 @@
         <div class="home-right">
           <aside class="top-ranking">
             <h2>Top 3 Ranking</h2>
-            <p>1° Usuario - 0 pts</p>
-            <p>2° Usuario - 0 pts</p>
-            <p>3° Usuario - 0 pts</p>
+            <div v-if="rankingStore.cargando" class="loading-text">Cargando posiciones...</div>
+            <div v-else>
+              <div 
+                v-for="(competidor, index) in rankingStore.top3Ranking" 
+                :key="competidor.id" 
+                class="ranking-item"
+              >
+                <p>
+                  <strong>{{ index + 1 }}° {{ competidor.nombre }}</strong> 
+                  - {{ competidor.puntos }} pts
+                </p>
+              </div>
+            </div>
           </aside>
 
           <aside class="home-summary">
             <h2>Resumen</h2>
-            <p>Puntos actuales: 0</p>
-            <p>Predicciones guardadas: 0</p>
+            <p>
+              Puntos actuales: 
+              <span class="puntos-destacados">{{ resultadosStore.puntajeTotalUsuario }}</span>
+            </p>
+            <p>Predicciones guardadas: {{ totalPrediccionesGuardadas }}</p>
             <p>Fecha seleccionada: {{ fechaSeleccionada }}</p>
           </aside>
         </div>
@@ -52,9 +65,16 @@ import FechaSelector from '@/components/FechaSelector.vue'
 
 import datosProde from '@/dataProde.json'
 import { usePrediccionesStore } from '@/stores/storePredicciones'
+// 1. Importamos los nuevos stores que manejan los puntos y el ranking
+import { useResultadosRealesStore } from '@/stores/storeResultadosReales'
+import { useStoreRanking } from '@/stores/storeRanking'
 
 const fechaSeleccionada = ref(1)
+
+// 2. Instanciamos los 3 stores para usarlos en la vista
 const prediccionesStore = usePrediccionesStore()
+const resultadosStore = useResultadosRealesStore()
+const rankingStore = useStoreRanking()
 
 const partidosFiltrados = computed(() => {
   return datosProde.partidos
@@ -66,8 +86,21 @@ const partidosFiltrados = computed(() => {
     })
 })
 
-onMounted(() => {
-  prediccionesStore.cargarPredicciones()
+// COMPUTED AUXILIAR: Cuenta cuántas predicciones hizo el usuario en total
+const totalPrediccionesGuardadas = computed(() => {
+  return prediccionesStore.obtenerTodasLasPredicciones().length
+})
+
+// 3. El ciclo de vida: Ejecutamos los llamados asíncronos en orden correcto
+onMounted(async () => {
+  // Primero cargamos tus predicciones guardadas
+  await prediccionesStore.cargarPredicciones()
+  
+  // Segundo cargamos los resultados de Mockachino para cruzar datos y sacar tus puntos
+  await resultadosStore.inicializar()
+  
+  // Tercero cargamos el ranking de los chicos y le inyectamos tu puntaje calculado
+  await rankingStore.cargarRanking()
 })
 </script>
 
@@ -171,6 +204,27 @@ onMounted(() => {
 .top-ranking p,
 .home-summary p {
   margin: 8px 0;
+}
+
+/* Clases agregadas para darle facha a los nuevos datos */
+.loading-text {
+  color: #888;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.ranking-item {
+  border-bottom: 1px solid #333;
+  padding-bottom: 4px;
+}
+.ranking-item:last-child {
+  border-bottom: none;
+}
+
+.puntos-destacados {
+  color: #00c853;
+  font-weight: bold;
+  font-size: 1.1rem;
 }
 
 @media (max-width: 1300px) {
