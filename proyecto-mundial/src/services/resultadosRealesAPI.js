@@ -40,3 +40,16 @@ export const resultadosRealesAPI = {
   }
 }
 
+// Al final de src/services/resultadosRealesAPI.js
+
+export const rankingAPI = {
+  obtenerRanking: async () => {
+    // PEGÁ ACÁ ADENTRO LA URL QUE TE DIO MOCKACHINO RECIÉN
+    const URL_RANKING = 'https://www.mockachino.com/00c355dc-b07e-42/ranking' 
+    
+    const response = await fetch(URL_RANKING)
+    if (!response.ok) throw new Error('Error al obtener el ranking global')
+    const data = await response.json()
+    return data.usuarios
+  }
+}
