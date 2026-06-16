@@ -1,197 +1,277 @@
-// import { defineStore } from 'pinia'
-// import { ref } from 'vue'
-// import { resultadosRealesAPI } from '@/services/resultadosRealesAPI'
-// import datosProde from '@/dataProde.json'
-
-// export const useResultadosRealesStore = defineStore('resultadosReales', () => {
-//   const resultados = ref([])
-//   const cargando = ref(false)
-
-//   const generarGolesAleatorios = () => Math.floor(Math.random() * 5)
-
-//   const inicializar = async () => {
-//     cargando.value = true
-//     try {
-//       const datos = await resultadosRealesAPI.obtenerResultados()
-
-//       if (datos.length > 0) {
-//         resultados.value = datos
-//       } else {
-//         await generarYGuardarResultados()
-//       }
-//     } catch (error) {
-//       console.error('Error al inicializar resultados reales:', error)
-//     } finally {
-//       cargando.value = false
-//     }
-//   }
-
-//   const generarYGuardarResultados = async () => {
-//     const nuevosResultados = []
-
-//     for (const partido of datosProde.partidos) {
-//       const resultado = {
-//         partidoId: partido.id,
-//         local: partido.local,
-//         visitante: partido.visitante,
-//         golesLocal: generarGolesAleatorios(),
-//         golesVisitante: generarGolesAleatorios(),
-//         grupo: partido.grupo
-//       }
-
-//       try {
-//         const guardado = await resultadosRealesAPI.guardarResultado(resultado)
-//         nuevosResultados.push(guardado)
-//       } catch (error) {
-//         console.error(`Error al guardar partido ${partido.id}:`, error)
-//       }
-//     }
-
-//     resultados.value = nuevosResultados
-//   }
-
-//   const calcularTablaGrupo = (grupo) => {
-//     const equiposDelGrupo = datosProde.paises.filter(pais => pais.grupo === grupo)
-
-//     const tabla = {}
-//     equiposDelGrupo.forEach(equipo => {
-//       tabla[equipo.id] = {
-//         id: equipo.id,
-//         nombre: equipo.nombre,
-//         bandera: equipo.bandera,
-//         grupo: equipo.grupo,
-//         pj: 0, pg: 0, pe: 0, pp: 0,
-//         gf: 0, gc: 0, dg: 0, pts: 0
-//       }
-//     })
-
-//     const resultadosDelGrupo = resultados.value.filter(r => r.grupo === grupo)
-
-//     resultadosDelGrupo.forEach(partido => {
-//       const equipoLocal = tabla[partido.local]
-//       const equipoVisitante = tabla[partido.visitante]
-
-//       if (!equipoLocal || !equipoVisitante) return
-
-//       equipoLocal.pj++
-//       equipoVisitante.pj++
-//       equipoLocal.gf += Number(partido.golesLocal)
-//       equipoLocal.gc += Number(partido.golesVisitante)
-//       equipoVisitante.gf += Number(partido.golesVisitante)
-//       equipoVisitante.gc += Number(partido.golesLocal)
-
-//       if (partido.golesLocal > partido.golesVisitante) {
-//         equipoLocal.pg++
-//         equipoVisitante.pp++
-//         equipoLocal.pts += 3
-//       } else if (partido.golesLocal < partido.golesVisitante) {
-//         equipoVisitante.pg++
-//         equipoLocal.pp++
-//         equipoVisitante.pts += 3
-//       } else {
-//         equipoLocal.pe++
-//         equipoVisitante.pe++
-//         equipoLocal.pts += 1
-//         equipoVisitante.pts += 1
-//       }
-
-//       equipoLocal.dg = equipoLocal.gf - equipoLocal.gc
-//       equipoVisitante.dg = equipoVisitante.gf - equipoVisitante.gc
-//     })
-
-//     return Object.values(tabla).sort((a, b) => {
-//       if (b.pts !== a.pts) return b.pts - a.pts
-//       if (b.dg !== a.dg) return b.dg - a.dg
-//       if (b.gf !== a.gf) return b.gf - a.gf
-//       return a.nombre.localeCompare(b.nombre)
-//     })
-//   }
-
-//   return {
-//     resultados,
-//     cargando,
-//     inicializar,
-//     calcularTablaGrupo
-//   }
-// })
-
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { resultadosRealesAPI } from '@/services/resultadosRealesAPI'
 import datosProde from '@/dataProde.json'
 
-export const useResultadosRealesStore = defineStore('resultadosReales', () => {
-  const resultados = ref([])
-  const cargando = ref(false)
+const GRUPOS = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L'
+]
 
-  const inicializar = async () => {
-    if (resultados.value.length > 0) return
-    cargando.value = true
-    try {
-      resultados.value = await resultadosRealesAPI.obtenerResultados()
-    } catch (error) {
-      console.error('Error al cargar resultados reales:', error)
-    } finally {
-      cargando.value = false
+export const useResultadosRealesStore = defineStore(
+  'resultadosReales',
+  () => {
+    const resultados = ref([])
+    const cargando = ref(false)
+    const error = ref(null)
+
+    /*
+      Trae los resultados reales desde Mockachino.
+
+      Si ya fueron cargados anteriormente, no vuelve
+      a hacer la petición.
+    */
+    const inicializar = async () => {
+      if (resultados.value.length > 0) {
+        return
+      }
+
+      cargando.value = true
+      error.value = null
+
+      try {
+        const datos =
+          await resultadosRealesAPI.obtenerResultados()
+
+        resultados.value = Array.isArray(datos)
+          ? datos
+          : []
+      } catch (err) {
+        console.error(
+          'Error al cargar resultados reales:',
+          err
+        )
+
+        error.value = err.message
+        resultados.value = []
+      } finally {
+        cargando.value = false
+      }
+    }
+
+    /*
+      Criterios que actualmente usa el proyecto
+      para ordenar equipos.
+
+      1. Puntos
+      2. Diferencia de gol
+      3. Goles a favor
+      4. Nombre
+    */
+    const compararEquipos = (equipoA, equipoB) => {
+      if (equipoB.pts !== equipoA.pts) {
+        return equipoB.pts - equipoA.pts
+      }
+
+      if (equipoB.dg !== equipoA.dg) {
+        return equipoB.dg - equipoA.dg
+      }
+
+      if (equipoB.gf !== equipoA.gf) {
+        return equipoB.gf - equipoA.gf
+      }
+
+      return equipoA.nombre.localeCompare(
+        equipoB.nombre
+      )
+    }
+
+    /*
+      Calcula la tabla de posiciones de un grupo.
+    */
+    const calcularTablaGrupo = (grupo) => {
+      const equiposDelGrupo =
+        datosProde.paises.filter(
+          (pais) => pais.grupo === grupo
+        )
+
+      const tabla = {}
+
+      equiposDelGrupo.forEach((equipo) => {
+        tabla[equipo.id] = {
+          id: equipo.id,
+          nombre: equipo.nombre,
+          bandera: equipo.bandera,
+          grupo: equipo.grupo,
+
+          pj: 0,
+          pg: 0,
+          pe: 0,
+          pp: 0,
+
+          gf: 0,
+          gc: 0,
+          dg: 0,
+          pts: 0
+        }
+      })
+
+      const resultadosDelGrupo =
+        resultados.value.filter(
+          (resultado) => resultado.grupo === grupo
+        )
+
+      resultadosDelGrupo.forEach((partido) => {
+        const equipoLocal =
+          tabla[partido.local]
+
+        const equipoVisitante =
+          tabla[partido.visitante]
+
+        if (!equipoLocal || !equipoVisitante) {
+          return
+        }
+
+        const golesLocal =
+          Number(partido.golesLocal)
+
+        const golesVisitante =
+          Number(partido.golesVisitante)
+
+        /*
+          Evita calcular partidos que todavía
+          no tengan un resultado válido.
+        */
+        if (
+          Number.isNaN(golesLocal) ||
+          Number.isNaN(golesVisitante)
+        ) {
+          return
+        }
+
+        equipoLocal.pj += 1
+        equipoVisitante.pj += 1
+
+        equipoLocal.gf += golesLocal
+        equipoLocal.gc += golesVisitante
+
+        equipoVisitante.gf += golesVisitante
+        equipoVisitante.gc += golesLocal
+
+        if (golesLocal > golesVisitante) {
+          equipoLocal.pg += 1
+          equipoVisitante.pp += 1
+          equipoLocal.pts += 3
+        } else if (golesLocal < golesVisitante) {
+          equipoVisitante.pg += 1
+          equipoLocal.pp += 1
+          equipoVisitante.pts += 3
+        } else {
+          equipoLocal.pe += 1
+          equipoVisitante.pe += 1
+
+          equipoLocal.pts += 1
+          equipoVisitante.pts += 1
+        }
+
+        equipoLocal.dg =
+          equipoLocal.gf - equipoLocal.gc
+
+        equipoVisitante.dg =
+          equipoVisitante.gf -
+          equipoVisitante.gc
+      })
+
+      return Object
+        .values(tabla)
+        .sort(compararEquipos)
+    }
+
+    /*
+      Calcula las tablas de los 12 grupos.
+    */
+    const obtenerTablasReales = () => {
+      const tablas = {}
+
+      GRUPOS.forEach((grupo) => {
+        tablas[grupo] =
+          calcularTablaGrupo(grupo)
+      })
+
+      return tablas
+    }
+
+    /*
+      Determina si todos los partidos de grupos
+      tienen resultados cargados.
+
+      En el Mundial hay 6 partidos por grupo.
+    */
+    const gruposCompletos = () => {
+      return GRUPOS.every((grupo) => {
+        const resultadosGrupo =
+          resultados.value.filter(
+            (resultado) =>
+              resultado.grupo === grupo
+          )
+
+        return resultadosGrupo.length >= 6
+      })
+    }
+
+    /*
+      Obtiene:
+
+      - los 12 primeros;
+      - los 12 segundos;
+      - los 8 mejores terceros.
+    */
+    const obtenerClasificados = () => {
+      const tablas = obtenerTablasReales()
+
+      const primeros = {}
+      const segundos = {}
+      const terceros = []
+
+      GRUPOS.forEach((grupo) => {
+        const tabla = tablas[grupo]
+
+        if (!tabla || tabla.length < 3) {
+          return
+        }
+
+        primeros[grupo] = tabla[0]
+        segundos[grupo] = tabla[1]
+
+        terceros.push({
+          ...tabla[2],
+          grupo
+        })
+      })
+
+      const mejoresTerceros = terceros
+        .sort(compararEquipos)
+        .slice(0, 8)
+
+      return {
+        primeros,
+        segundos,
+        terceros,
+        mejoresTerceros
+      }
+    }
+
+    return {
+      resultados,
+      cargando,
+      error,
+
+      inicializar,
+      calcularTablaGrupo,
+      obtenerTablasReales,
+      obtenerClasificados,
+      gruposCompletos,
+      compararEquipos
     }
   }
-
-  const calcularTablaGrupo = (grupo) => {
-    const equiposDelGrupo = datosProde.paises.filter(pais => pais.grupo === grupo)
-
-    const tabla = {}
-    equiposDelGrupo.forEach(equipo => {
-      tabla[equipo.id] = {
-        id: equipo.id,
-        nombre: equipo.nombre,
-        bandera: equipo.bandera,
-        grupo: equipo.grupo,
-        pj: 0, pg: 0, pe: 0, pp: 0,
-        gf: 0, gc: 0, dg: 0, pts: 0
-      }
-    })
-
-    const resultadosDelGrupo = resultados.value.filter(r => r.grupo === grupo)
-
-    resultadosDelGrupo.forEach(partido => {
-      const equipoLocal = tabla[partido.local]
-      const equipoVisitante = tabla[partido.visitante]
-
-      if (!equipoLocal || !equipoVisitante) return
-
-      equipoLocal.pj++
-      equipoVisitante.pj++
-      equipoLocal.gf += Number(partido.golesLocal)
-      equipoLocal.gc += Number(partido.golesVisitante)
-      equipoVisitante.gf += Number(partido.golesVisitante)
-      equipoVisitante.gc += Number(partido.golesLocal)
-
-      if (partido.golesLocal > partido.golesVisitante) {
-        equipoLocal.pg++
-        equipoVisitante.pp++
-        equipoLocal.pts += 3
-      } else if (partido.golesLocal < partido.golesVisitante) {
-        equipoVisitante.pg++
-        equipoLocal.pp++
-        equipoVisitante.pts += 3
-      } else {
-        equipoLocal.pe++
-        equipoVisitante.pe++
-        equipoLocal.pts += 1
-        equipoVisitante.pts += 1
-      }
-
-      equipoLocal.dg = equipoLocal.gf - equipoLocal.gc
-      equipoVisitante.dg = equipoVisitante.gf - equipoVisitante.gc
-    })
-
-    return Object.values(tabla).sort((a, b) => {
-      if (b.pts !== a.pts) return b.pts - a.pts
-      if (b.dg !== a.dg) return b.dg - a.dg
-      if (b.gf !== a.gf) return b.gf - a.gf
-      return a.nombre.localeCompare(b.nombre)
-    })
-  }
-
-  return { resultados, cargando, inicializar, calcularTablaGrupo }
-})
+)
