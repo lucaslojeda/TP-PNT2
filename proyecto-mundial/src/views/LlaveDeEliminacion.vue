@@ -1,29 +1,19 @@
 <template>
-  <div class="llave-container">
+  <div 
+    class="llave-container" 
+    :class="{ 'efecto-campeon-activo': transicionCampeon }"
+    :style="estilosDinamicos"
+  >
     <Sidebar />
 
     <main class="llave-content">
       <header class="llave-header">
         <h1>Llave de eliminación directa</h1>
-
-        <p>
-          Realizá tus predicciones desde dieciseisavos hasta elegir al campeón.
-        </p>
+        <p>Realizá tus predicciones desde dieciseisavos hasta elegir al campeón.</p>
       </header>
 
-      <p
-        v-if="llaveStore.cargando"
-        class="mensaje-estado"
-      >
-        Cargando llave...
-      </p>
-
-      <p
-        v-if="llaveStore.error"
-        class="mensaje-error"
-      >
-        {{ llaveStore.error }}
-      </p>
+      <p v-if="llaveStore.cargando" class="mensaje-estado">Cargando llave...</p>
+      <p v-if="llaveStore.error" class="mensaje-error">{{ llaveStore.error }}</p>
 
       <div
         ref="llaveScroll"
@@ -94,15 +84,25 @@
         v-if="llaveStore.campeon"
         class="campeon-container"
       >
-        <h2>Campeón predicho</h2>
+        <div class="campeon-card card-premium-vidrio">
+          <div class="trofeo-real-wrapper">
+            <img 
+              :src="urlTrofeoReal" 
+              alt="Copa del Mundo" 
+              class="trofeo-real-imagen"
+            />
+          </div>
 
-        <img
-          :src="llaveStore.campeon.bandera"
-          :alt="`Bandera de ${llaveStore.campeon.nombre}`"
-          class="campeon-bandera"
-        />
-
-        <p>{{ llaveStore.campeon.nombre }}</p>
+          <h2>Campeón predicho</h2>
+          <div class="bandera-wrapper">
+            <img
+              :src="llaveStore.campeon.bandera"
+              :alt="`Bandera de ${llaveStore.campeon.nombre}`"
+              class="campeon-bandera"
+            />
+          </div>
+          <p>{{ llaveStore.campeon.nombre }}</p>
+        </div>
       </section>
     </main>
   </div>
@@ -113,88 +113,162 @@ import {
   nextTick,
   onMounted,
   onUnmounted,
-  ref
+  ref,
+  watch,
+  computed
 } from 'vue'
 
 import Sidebar from '@/components/Sidebar.vue'
 import RondaLlave from '@/components/RondaLlave.vue'
 import { useLlaveEliminacionStore } from '@/stores/storeLlaveEliminacion'
+import urlTrofeoReal from '@/assets/logo.png'
 
 const llaveStore = useLlaveEliminacionStore()
 
 const llaveScroll = ref(null)
 const llaveTablero = ref(null)
 const barraScroll = ref(null)
-
 const anchoTablero = ref(0)
-
 let sincronizando = false
 
-const actualizarAnchoTablero = () => {
-  if (!llaveTablero.value) {
-    return
-  }
+// Estado para controlar la animación dorada inicial
+const transicionCampeon = ref(false)
 
-  anchoTablero.value =
-    llaveTablero.value.scrollWidth
+// Configuración de banderas de fondo de alta resolución y los colores de las tarjetas
+const baseConfigBanderas = {
+  'Argentina': {
+    bg: '/imagenes/argentina.png',
+    tarjetaBg: 'rgba(24, 43, 64, 0.45)', 
+    borde: '#74acdf', 
+    texto: '#f6b426'  
+  },
+  'Portugal': {
+    bg: '/imagenes/portugal.png',
+    tarjetaBg: 'rgba(25, 15, 15, 0.45)',
+    borde: '#da121a',
+    texto: '#046a38'
+  },
+  'Corea del Sur': { 
+    bg: '/imagenes/corea.png', 
+    tarjetaBg: 'rgba(10, 17, 40, 0.45)', 
+    borde: '#0047a0', 
+    texto: '#cd2e3a' 
+  },
+  'Marruecos': { 
+    bg: '/imagenes/marruecos.png', 
+    tarjetaBg: 'rgba(20, 35, 25, 0.45)', 
+    borde: '#c1272d', 
+    texto: '#006233' 
+  },
+  'México': { 
+    bg: 'https://flagcdn.com/w1280/mx.png', 
+    tarjetaBg: 'rgba(2, 44, 22, 0.35)', 
+    borde: '#14a552', 
+    texto: '#ce1126' 
+  },
+  'Suecia': { 
+    bg: 'https://flagcdn.com/w1280/se.png', 
+    tarjetaBg: 'rgba(0, 47, 95, 0.35)', 
+    borde: '#006aa7', 
+    texto: '#fecc00' 
+  },
+  'Bosnia y He...': { 
+    bg: 'https://flagcdn.com/w1280/ba.png', 
+    tarjetaBg: 'rgba(0, 30, 98, 0.35)', 
+    borde: '#002f6c', 
+    texto: '#ffcc00' 
+  },
+  'Haití': { 
+    bg: 'https://flagcdn.com/w1280/ht.png', 
+    tarjetaBg: 'rgba(26, 26, 46, 0.35)', 
+    borde: '#00209f', 
+    texto: '#d21034' 
+  },
+  'Túnez': { 
+    bg: 'https://flagcdn.com/w1280/tn.png', 
+    tarjetaBg: 'rgba(74, 14, 23, 0.35)', 
+    borde: '#e41b13', 
+    texto: '#ffffff' 
+  },
+  'Irán': { 
+    bg: 'https://flagcdn.com/w1280/ir.png', 
+    tarjetaBg: 'rgba(28, 58, 39, 0.35)', 
+    borde: '#239e46', 
+    texto: '#da251d' 
+  }
+}
+
+// Variables reactivas vinculadas al CSS
+const urlBanderaFondo = ref('')
+const colorTarjetaBg = ref('rgba(31, 31, 31, 0.9)')
+const colorBordeLlave = ref('rgba(255, 255, 255, 0.1)')
+const colorTextoRonda = ref('#00d26a')
+
+// Estilos dinámicos inyectados
+const estilosDinamicos = computed(() => ({
+  '--bg-bandera': urlBanderaFondo.value ? `url(${urlBanderaFondo.value})` : 'none',
+  '--tarjeta-bg': colorTarjetaBg.value,
+  '--borde-llave': colorBordeLlave.value,
+  '--color-acento': colorTextoRonda.value
+}))
+
+watch(() => llaveStore.campeon, (nuevoCampeon) => {
+  if (nuevoCampeon) {
+    transicionCampeon.value = true
+    
+    colorTarjetaBg.value = 'rgba(44, 34, 5, 0.9)'
+    colorBordeLlave.value = '#ffd700'
+    colorTextoRonda.value = '#fff3a3'
+
+    setTimeout(() => {
+      const config = baseConfigBanderas[nuevoCampeon.nombre] || { 
+        bg: '', tarjetaBg: 'rgba(31, 31, 31, 0.9)', borde: '#00d26a', texto: '#00d26a' 
+      }
+      urlBanderaFondo.value = config.bg
+      colorTarjetaBg.value = config.tarjetaBg
+      colorBordeLlave.value = config.borde
+      colorTextoRonda.value = config.texto
+    }, 700)
+
+    setTimeout(() => {
+      transicionCampeon.value = false
+    }, 1600)
+  } else {
+    urlBanderaFondo.value = ''
+    colorTarjetaBg.value = 'rgba(31, 31, 31, 0.9)'
+    colorBordeLlave.value = 'rgba(255, 255, 255, 0.1)'
+    colorTextoRonda.value = '#00d26a'
+  }
+}, { deep: true })
+
+const actualizarAnchoTablero = () => {
+  if (!llaveTablero.value) return
+  anchoTablero.value = llaveTablero.value.scrollWidth
 }
 
 const sincronizarDesdeLlave = () => {
-  if (
-    sincronizando ||
-    !llaveScroll.value ||
-    !barraScroll.value
-  ) {
-    return
-  }
-
+  if (sincronizando || !llaveScroll.value || !barraScroll.value) return
   sincronizando = true
-
-  barraScroll.value.scrollLeft =
-    llaveScroll.value.scrollLeft
-
-  requestAnimationFrame(() => {
-    sincronizando = false
-  })
+  barraScroll.value.scrollLeft = llaveScroll.value.scrollLeft
+  requestAnimationFrame(() => { sincronizando = false })
 }
 
 const sincronizarDesdeBarra = () => {
-  if (
-    sincronizando ||
-    !llaveScroll.value ||
-    !barraScroll.value
-  ) {
-    return
-  }
-
+  if (sincronizando || !llaveScroll.value || !barraScroll.value) return
   sincronizando = true
-
-  llaveScroll.value.scrollLeft =
-    barraScroll.value.scrollLeft
-
-  requestAnimationFrame(() => {
-    sincronizando = false
-  })
+  llaveScroll.value.scrollLeft = barraScroll.value.scrollLeft
+  requestAnimationFrame(() => { sincronizando = false })
 }
 
 onMounted(async () => {
   await llaveStore.inicializarLlave()
-
   await nextTick()
-
   actualizarAnchoTablero()
-
-  window.addEventListener(
-    'resize',
-    actualizarAnchoTablero
-  )
+  window.addEventListener('resize', actualizarAnchoTablero)
 })
 
 onUnmounted(() => {
-  window.removeEventListener(
-    'resize',
-    actualizarAnchoTablero
-  )
+  window.removeEventListener('resize', actualizarAnchoTablero)
 })
 </script>
 
@@ -202,10 +276,52 @@ onUnmounted(() => {
 .llave-container {
   min-height: 100vh;
   width: 100%;
-  background-color: #707070;
+  background-color: #1a1a1a;
+  background-image: var(--bg-bandera);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: relative;
+  overflow: hidden;
+  transition: background-image 0.8s ease-in-out;
+}
+
+.llave-container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(rgba(20, 20, 20, 0.65), rgba(20, 20, 20, 0.85)),
+              url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1280') no-repeat right 10% center;
+  background-size: contain;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.llave-container::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.85) 0%, rgba(0, 0, 0, 0) 70%);
+  z-index: 99;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.llave-container.efecto-campeon-activo::after {
+  animation: flashDorado 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes flashDorado {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 .llave-content {
+  position: relative;
+  z-index: 2;
   min-width: 0;
   width: calc(100vw - 250px);
   min-height: 100vh;
@@ -219,33 +335,15 @@ onUnmounted(() => {
   margin-bottom: 28px;
   padding: 20px;
   border-radius: 12px;
-  background-color: #1f1f1f;
+  background-color: rgba(30, 30, 30, 0.75);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: white;
 }
 
 .llave-header h1 {
   margin: 0;
-}
-
-.llave-header p {
-  margin: 8px 0 0;
-  color: #ccc;
-}
-
-.mensaje-estado {
-  margin: 20px 0;
-  color: white;
-  font-weight: 700;
-}
-
-.mensaje-error {
-  max-width: 650px;
-  margin: 20px 0;
-  padding: 12px;
-  border-radius: 8px;
-  background-color: #4b1818;
-  color: #ffb3b3;
-  font-weight: 700;
+  font-size: 2rem;
 }
 
 .llave-scroll {
@@ -254,7 +352,6 @@ onUnmounted(() => {
   overflow-x: auto;
   overflow-y: visible;
   box-sizing: border-box;
-
   scrollbar-width: none;
 }
 
@@ -264,54 +361,153 @@ onUnmounted(() => {
 
 .llave-tablero {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-start; /* Alinea las columnas arriba de todo */
   gap: 32px;
   width: max-content;
   min-width: 1800px;
+  padding: 20px 0;
+}
+
+:deep(.ronda-container),
+:deep(section > div),
+:deep(.llave-tablero > *) {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important; 
+  align-items: center !important;
+  
+  background: rgba(15, 15, 15, 0.65) !important;
+  
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+
+  border: 2px solid var(--borde-llave) !important;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  transition: background 0.8s ease, border-color 0.8s ease !important;
+}
+
+:deep(h3) {
+  color: var(--color-acento) !important;
+  font-size: 1.1rem !important;
+  font-weight: 850 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 2px !important;
+  text-align: center !important;
+  margin: 0 0 20px 0 !important; 
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+  transition: color 0.8s ease !important;
 }
 
 .barra-horizontal {
   position: sticky;
   bottom: 0;
   z-index: 50;
-
   width: 100%;
-  height: 20px;
-
+  height: 12px;
   overflow-x: auto;
   overflow-y: hidden;
-
-  background-color: #707070;
+  background-color: rgba(0,0,0,0.3);
 }
 
 .barra-contenido {
   height: 1px;
 }
 
+/* 🧪 SECCIÓN DEL CAMPEÓN FLOTANTE Y TRANSPARENTE */
 .campeon-container {
-  width: 280px;
-  margin-top: 30px;
-  padding: 20px;
-  border-radius: 12px;
-  background-color: #1f1f1f;
-  color: white;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 50px;
+  animation: slideUp 0.6s ease-out forwards;
+  position: relative;
+  z-index: 15;
 }
 
-.campeon-container h2 {
-  margin-top: 0;
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.card-premium-vidrio {
+  background: linear-gradient(
+    135deg, 
+    rgba(20, 20, 20, 0.5) 0%, 
+    rgba(10, 10, 10, 0.3) 100%
+  ) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border-radius: 20px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
+}
+
+.campeon-card {
+  width: 420px;
+  padding: 30px;
+  border: 3px solid var(--borde-llave);
+  color: white;
+  text-align: center;
+  position: relative;
+  transition: border-color 0.8s ease, background 0.8s ease !important;
+}
+
+/* 🏆 CONTENEDOR AJUSTADO PARA TU LOGO.PNG */
+.trofeo-real-wrapper {
+  position: absolute;
+  top: -75px; 
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px; 
+  height: 130px;
+  pointer-events: none;
+}
+
+.trofeo-real-imagen {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: pulsoCopaPro 2.5s infinite ease-in-out;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.6));
+}
+
+@keyframes pulsoCopaPro {
+  0% { transform: scale(1) translateY(0); filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6)); }
+  50% { transform: scale(1.08) translateY(-6px); filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.35)); }
+  100% { transform: scale(1) translateY(0); filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6)); }
+}
+
+.campeon-card h2 {
+  margin: 40px 0 20px 0; /* Espacio superior para que el logo no tape las letras */
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #ddd;
+}
+
+.bandera-wrapper {
+  display: inline-block;
+  padding: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+  margin-bottom: 15px;
 }
 
 .campeon-bandera {
-  width: 70px;
-  height: 46px;
+  width: 130px;
+  height: 85px;
   object-fit: cover;
-  border-radius: 5px;
+  border-radius: 6px;
+  display: block;
 }
 
-.campeon-container p {
-  margin-bottom: 0;
-  font-size: 1.2rem;
-  font-weight: 800;
+.campeon-card p {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 </style>
