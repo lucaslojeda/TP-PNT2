@@ -368,6 +368,7 @@ onUnmounted(() => {
   padding: 20px 0;
 }
 
+/* 🧪 COLUMNAS OSCURAS SÚPER NÍTIDAS (Sin blur pero con cuerpo) */
 :deep(.ronda-container),
 :deep(section > div),
 :deep(.llave-tablero > *) {
@@ -376,28 +377,20 @@ onUnmounted(() => {
   justify-content: flex-start !important; 
   align-items: center !important;
   
-  background: rgba(15, 15, 15, 0.65) !important;
+  /* 🎯 Bloque oscuro con buena opacidad para tapar el ruido visual del fondo */
+  background: rgba(20, 20, 20, 0.75) !important;
   
+  /* Totalmente cristalino, sin empañar la imagen */
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 
+  /* Resaltamos el borde con tu variable dinámica */
   border: 2px solid var(--borde-llave) !important;
   border-radius: 14px;
-  padding: 18px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  margin-top: 10px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
   transition: background 0.8s ease, border-color 0.8s ease !important;
-}
-
-:deep(h3) {
-  color: var(--color-acento) !important;
-  font-size: 1.1rem !important;
-  font-weight: 850 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 2px !important;
-  text-align: center !important;
-  margin: 0 0 20px 0 !important; 
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9) !important;
-  transition: color 0.8s ease !important;
 }
 
 .barra-horizontal {
@@ -433,15 +426,12 @@ onUnmounted(() => {
 }
 
 .card-premium-vidrio {
-  background: linear-gradient(
-    135deg, 
-    rgba(20, 20, 20, 0.5) 0%, 
-    rgba(10, 10, 10, 0.3) 100%
-  ) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
+  /* Fondo oscuro uniforme en sintonía con las columnas de arriba */
+  background: rgba(20, 20, 20, 0.8) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border-radius: 20px;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
 }
 
 .campeon-card {
