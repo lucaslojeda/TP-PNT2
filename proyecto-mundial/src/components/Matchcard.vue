@@ -13,13 +13,19 @@
           :alt="'Bandera de ' + equipoLocal.nombre"
           class="team-flag"
         />
-        <span class="team-name">{{ equipoLocal?.nombre || partido.local }}</span>
+
+        <span class="team-name">
+          {{ equipoLocal?.nombre || partido.local }}
+        </span>
       </div>
 
       <span class="versus">VS</span>
 
       <div class="team team-visitante">
-        <span class="team-name">{{ equipoVisitante?.nombre || partido.visitante }}</span>
+        <span class="team-name">
+          {{ equipoVisitante?.nombre || partido.visitante }}
+        </span>
+
         <img
           v-if="equipoVisitante"
           :src="equipoVisitante.bandera"
@@ -55,23 +61,33 @@
       />
     </div>
 
-    <p class="prediction-status">{{ estadoPrediccion }}</p>
+    <p class="prediction-status">
+      {{ estadoPrediccion }}
+    </p>
 
-    <button class="save-button" :disabled="prediccionGuardada" @click="guardarPrediccion">
-  Guardar predicción
-</button>
-    <button v-if="prediccionGuardada" class="reset-button" @click="reiniciarPrediccion">
-    Reiniciar predicción
-  </button>
+    <button
+      class="save-button"
+      :disabled="prediccionGuardada"
+      @click="guardarPrediccion"
+    >
+      Guardar predicción
+    </button>
+
+    <button
+      v-if="prediccionGuardada"
+      class="reset-button"
+      @click="reiniciarPrediccion"
+    >
+      Reiniciar predicción
+    </button>
   </article>
 </template>
 
 <script setup>
 import { computed, ref, watch } from 'vue'
-import datosProde from '@/dataProde.json'
-import { usePrediccionesStore } from '@/stores/storePredicciones'
 
-const prediccionesStore = usePrediccionesStore()
+import { useDatosProdeStore } from '@/stores/storeDataProde'
+import { usePrediccionesStore } from '@/stores/storePredicciones'
 
 const props = defineProps({
   partido: {
@@ -80,20 +96,31 @@ const props = defineProps({
   }
 })
 
+const dataProdeStore = useDatosProdeStore()
+const prediccionesStore = usePrediccionesStore()
+
 const golesLocal = ref('')
 const golesVisitante = ref('')
 const prediccionGuardada = ref(false)
 
 const prediccionExistente = computed(() => {
-  return prediccionesStore.obtenerPrediccion(props.partido.id)
+  return prediccionesStore.obtenerPrediccion(
+    props.partido.id
+  )
 })
 
 watch(
   prediccionExistente,
   (prediccion) => {
     if (prediccion) {
-      golesLocal.value = String(prediccion.golesLocal)
-      golesVisitante.value = String(prediccion.golesVisitante)
+      golesLocal.value = String(
+        prediccion.golesLocal
+      )
+
+      golesVisitante.value = String(
+        prediccion.golesVisitante
+      )
+
       prediccionGuardada.value = true
     } else {
       golesLocal.value = ''
@@ -101,27 +128,37 @@ watch(
       prediccionGuardada.value = false
     }
   },
-  { immediate: true }
+  {
+    immediate: true
+  }
 )
 
 const validarGolesLocal = () => {
-  golesLocal.value = golesLocal.value.replace(/\D/g, '')
+  golesLocal.value =
+    golesLocal.value.replace(/\D/g, '')
 }
 
 const validarGolesVisitante = () => {
-  golesVisitante.value = golesVisitante.value.replace(/\D/g, '')
+  golesVisitante.value =
+    golesVisitante.value.replace(/\D/g, '')
 }
 
 const equipoLocal = computed(() => {
-  return datosProde.paises.find(pais => pais.id === props.partido.local)
+  return dataProdeStore.obtenerPaisPorId(
+    props.partido.local
+  )
 })
 
 const equipoVisitante = computed(() => {
-  return datosProde.paises.find(pais => pais.id === props.partido.visitante)
+  return dataProdeStore.obtenerPaisPorId(
+    props.partido.visitante
+  )
 })
 
 const fechaFormateada = computed(() => {
-  const partesFecha = props.partido.fecha.split('-')
+  const partesFecha =
+    props.partido.fecha.split('-')
+
   const mes = partesFecha[1]
   const dia = partesFecha[2]
 
@@ -133,7 +170,10 @@ const estadoPrediccion = computed(() => {
     return 'Predicción guardada'
   }
 
-  if (golesLocal.value !== '' || golesVisitante.value !== '') {
+  if (
+    golesLocal.value !== '' ||
+    golesVisitante.value !== ''
+  ) {
     return 'Predicción sin guardar'
   }
 
@@ -146,7 +186,10 @@ const guardarPrediccion = async () => {
     return
   }
 
-  if (golesLocal.value === '' || golesVisitante.value === '') {
+  if (
+    golesLocal.value === '' ||
+    golesVisitante.value === ''
+  ) {
     prediccionGuardada.value = false
     return
   }
@@ -161,7 +204,9 @@ const guardarPrediccion = async () => {
 }
 
 const reiniciarPrediccion = async () => {
-  await prediccionesStore.reiniciarPrediccion(props.partido.id)
+  await prediccionesStore.reiniciarPrediccion(
+    props.partido.id
+  )
 
   golesLocal.value = ''
   golesVisitante.value = ''
@@ -259,6 +304,12 @@ const reiniciarPrediccion = async () => {
   border-color: #00c853;
 }
 
+.score-input:disabled {
+  background-color: #222;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
 .score-separator {
   color: #aaa;
   font-size: 1.2rem;
@@ -285,6 +336,11 @@ const reiniciarPrediccion = async () => {
   transition: all 0.2s ease;
 }
 
+.save-button:hover {
+  background-color: #00e060;
+  transform: translateY(-1px);
+}
+
 .save-button:disabled {
   background-color: #555;
   color: #aaa;
@@ -297,15 +353,22 @@ const reiniciarPrediccion = async () => {
   transform: none;
 }
 
-.score-input:disabled {
-  background-color: #222;
-  color: #aaa;
-  cursor: not-allowed;
+.reset-button {
+  display: block;
+  margin: 10px auto 0;
+  background-color: transparent;
+  color: #ff5c5c;
+  border: 1px solid #ff5c5c;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.save-button:hover {
-  background-color: #00e060;
-  transform: translateY(-1px);
+.reset-button:hover {
+  background-color: #ff5c5c;
+  color: #111;
 }
 
 @media (max-width: 600px) {
@@ -327,23 +390,5 @@ const reiniciarPrediccion = async () => {
   .versus {
     text-align: center;
   }
-}
-
-.reset-button {
-  display: block;
-  margin: 10px auto 0;
-  background-color: transparent;
-  color: #ff5c5c;
-  border: 1px solid #ff5c5c;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.reset-button:hover {
-  background-color: #ff5c5c;
-  color: #111;
 }
 </style>

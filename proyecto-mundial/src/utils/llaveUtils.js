@@ -24,39 +24,89 @@ export const GRUPOS = [
 const LUGARES_PARA_TERCEROS = [
   {
     clave: 'partido-74',
-    gruposPermitidos: ['A', 'B', 'C', 'D', 'F']
+    gruposPermitidos: [
+      'A',
+      'B',
+      'C',
+      'D',
+      'F'
+    ]
   },
   {
     clave: 'partido-77',
-    gruposPermitidos: ['C', 'D', 'F', 'G', 'H']
+    gruposPermitidos: [
+      'C',
+      'D',
+      'F',
+      'G',
+      'H'
+    ]
   },
   {
     clave: 'partido-79',
-    gruposPermitidos: ['C', 'E', 'F', 'H', 'I']
+    gruposPermitidos: [
+      'C',
+      'E',
+      'F',
+      'H',
+      'I'
+    ]
   },
   {
     clave: 'partido-80',
-    gruposPermitidos: ['E', 'H', 'I', 'J', 'K']
+    gruposPermitidos: [
+      'E',
+      'H',
+      'I',
+      'J',
+      'K'
+    ]
   },
   {
     clave: 'partido-81',
-    gruposPermitidos: ['B', 'E', 'F', 'I', 'J']
+    gruposPermitidos: [
+      'B',
+      'E',
+      'F',
+      'I',
+      'J'
+    ]
   },
   {
     clave: 'partido-82',
-    gruposPermitidos: ['A', 'E', 'H', 'I', 'J']
+    gruposPermitidos: [
+      'A',
+      'E',
+      'H',
+      'I',
+      'J'
+    ]
   },
   {
     clave: 'partido-85',
-    gruposPermitidos: ['E', 'F', 'G', 'I', 'J']
+    gruposPermitidos: [
+      'E',
+      'F',
+      'G',
+      'I',
+      'J'
+    ]
   },
   {
     clave: 'partido-87',
-    gruposPermitidos: ['D', 'E', 'I', 'J', 'L']
+    gruposPermitidos: [
+      'D',
+      'E',
+      'I',
+      'J',
+      'L'
+    ]
   }
 ]
 
-export const normalizarEquipo = (equipo) => {
+export const normalizarEquipo = (
+  equipo
+) => {
   if (!equipo) {
     return null
   }
@@ -76,58 +126,77 @@ export const crearPartido = (
   return {
     id,
     fase,
-    equipo1: normalizarEquipo(equipo1),
-    equipo2: normalizarEquipo(equipo2),
+
+    equipo1:
+      normalizarEquipo(equipo1),
+
+    equipo2:
+      normalizarEquipo(equipo2),
+
     golesEquipo1: null,
     golesEquipo2: null,
+
+    penalesEquipo1: null,
+    penalesEquipo2: null,
+
     ganadorId: null,
     prediccionGuardada: false
   }
 }
 
-export const crearRondas = (crucesDieciseisavos) => {
+export const crearRondas = (
+  crucesDieciseisavos
+) => {
   const partidosDieciseisavos =
-    crucesDieciseisavos.map((cruce, indice) => {
-      return crearPartido(
-        `dieciseisavos-${indice + 1}`,
-        'dieciseisavos',
-        cruce.equipo1,
-        cruce.equipo2
-      )
-    })
+    crucesDieciseisavos.map(
+      (cruce, indice) => {
+        return crearPartido(
+          `dieciseisavos-${indice + 1}`,
+          'dieciseisavos',
+          cruce.equipo1,
+          cruce.equipo2
+        )
+      }
+    )
 
-  const partidosOctavos = Array.from(
-    { length: 8 },
-    (_, indice) => {
-      return crearPartido(
-        `octavos-${indice + 1}`,
-        'octavos'
-      )
-    }
-  )
+  const partidosOctavos =
+    Array.from(
+      { length: 8 },
+      (_, indice) => {
+        return crearPartido(
+          `octavos-${indice + 1}`,
+          'octavos'
+        )
+      }
+    )
 
-  const partidosCuartos = Array.from(
-    { length: 4 },
-    (_, indice) => {
-      return crearPartido(
-        `cuartos-${indice + 1}`,
-        'cuartos'
-      )
-    }
-  )
+  const partidosCuartos =
+    Array.from(
+      { length: 4 },
+      (_, indice) => {
+        return crearPartido(
+          `cuartos-${indice + 1}`,
+          'cuartos'
+        )
+      }
+    )
 
-  const partidosSemifinales = Array.from(
-    { length: 2 },
-    (_, indice) => {
-      return crearPartido(
-        `semifinales-${indice + 1}`,
-        'semifinales'
-      )
-    }
-  )
+  const partidosSemifinales =
+    Array.from(
+      { length: 2 },
+      (_, indice) => {
+        return crearPartido(
+          `semifinales-${indice + 1}`,
+          'semifinales'
+        )
+      }
+    )
 
   const partidosFinal = [
-    crearPartido('final-1', 'final')
+    crearPartido(
+      'final-1',
+      'final'
+    )
   ]
 
   return {
@@ -139,7 +208,9 @@ export const crearRondas = (crucesDieciseisavos) => {
   }
 }
 
-const asignarMejoresTerceros = (mejoresTerceros) => {
+const asignarMejoresTerceros = (
+  mejoresTerceros
+) => {
   const asignaciones = {}
 
   const buscarAsignacion = (
@@ -154,15 +225,20 @@ const asignarMejoresTerceros = (mejoresTerceros) => {
     }
 
     const lugar =
-      LUGARES_PARA_TERCEROS[indiceLugar]
+      LUGARES_PARA_TERCEROS[
+        indiceLugar
+      ]
 
     for (
       let indiceTercero = 0;
-      indiceTercero < tercerosDisponibles.length;
+      indiceTercero <
+      tercerosDisponibles.length;
       indiceTercero++
     ) {
       const tercero =
-        tercerosDisponibles[indiceTercero]
+        tercerosDisponibles[
+          indiceTercero
+        ]
 
       const grupoPermitido =
         lugar.gruposPermitidos.includes(
@@ -173,7 +249,8 @@ const asignarMejoresTerceros = (mejoresTerceros) => {
         continue
       }
 
-      asignaciones[lugar.clave] = tercero
+      asignaciones[lugar.clave] =
+        tercero
 
       const tercerosRestantes =
         tercerosDisponibles.filter(
@@ -191,16 +268,19 @@ const asignarMejoresTerceros = (mejoresTerceros) => {
         return true
       }
 
-      delete asignaciones[lugar.clave]
+      delete asignaciones[
+        lugar.clave
+      ]
     }
 
     return false
   }
 
-  const pudoAsignar = buscarAsignacion(
-    0,
-    mejoresTerceros
-  )
+  const pudoAsignar =
+    buscarAsignacion(
+      0,
+      mejoresTerceros
+    )
 
   if (!pudoAsignar) {
     throw new Error(
@@ -220,14 +300,13 @@ export const generarCrucesDieciseisavos = (
     mejoresTerceros
   } = clasificados
 
-  const faltanClasificados = GRUPOS.some(
-    (grupo) => {
+  const faltanClasificados =
+    GRUPOS.some((grupo) => {
       return (
         !primeros[grupo] ||
         !segundos[grupo]
       )
-    }
-  )
+    })
 
   if (faltanClasificados) {
     throw new Error(
@@ -236,7 +315,9 @@ export const generarCrucesDieciseisavos = (
   }
 
   if (
-    !Array.isArray(mejoresTerceros) ||
+    !Array.isArray(
+      mejoresTerceros
+    ) ||
     mejoresTerceros.length < 8
   ) {
     throw new Error(
@@ -257,7 +338,9 @@ export const generarCrucesDieciseisavos = (
     {
       equipo1: primeros.E,
       equipo2:
-        tercerosAsignados['partido-74']
+        tercerosAsignados[
+          'partido-74'
+        ]
     },
 
     {
@@ -272,7 +355,9 @@ export const generarCrucesDieciseisavos = (
     {
       equipo1: primeros.I,
       equipo2:
-        tercerosAsignados['partido-77']
+        tercerosAsignados[
+          'partido-77'
+        ]
     },
     {
       equipo1: segundos.E,
@@ -282,23 +367,31 @@ export const generarCrucesDieciseisavos = (
     {
       equipo1: primeros.A,
       equipo2:
-        tercerosAsignados['partido-79']
+        tercerosAsignados[
+          'partido-79'
+        ]
     },
     {
       equipo1: primeros.L,
       equipo2:
-        tercerosAsignados['partido-80']
+        tercerosAsignados[
+          'partido-80'
+        ]
     },
 
     {
       equipo1: primeros.D,
       equipo2:
-        tercerosAsignados['partido-81']
+        tercerosAsignados[
+          'partido-81'
+        ]
     },
     {
       equipo1: primeros.G,
       equipo2:
-        tercerosAsignados['partido-82']
+        tercerosAsignados[
+          'partido-82'
+        ]
     },
 
     {
@@ -313,7 +406,9 @@ export const generarCrucesDieciseisavos = (
     {
       equipo1: primeros.B,
       equipo2:
-        tercerosAsignados['partido-85']
+        tercerosAsignados[
+          'partido-85'
+        ]
     },
     {
       equipo1: primeros.J,
@@ -323,7 +418,9 @@ export const generarCrucesDieciseisavos = (
     {
       equipo1: primeros.K,
       equipo2:
-        tercerosAsignados['partido-87']
+        tercerosAsignados[
+          'partido-87'
+        ]
     },
     {
       equipo1: segundos.D,
@@ -332,21 +429,28 @@ export const generarCrucesDieciseisavos = (
   ]
 }
 
-export const obtenerFaseSiguiente = (fase) => {
+export const obtenerFaseSiguiente = (
+  fase
+) => {
   const indiceFase =
     ORDEN_FASES.indexOf(fase)
 
   if (
     indiceFase === -1 ||
-    indiceFase === ORDEN_FASES.length - 1
+    indiceFase ===
+      ORDEN_FASES.length - 1
   ) {
     return null
   }
 
-  return ORDEN_FASES[indiceFase + 1]
+  return ORDEN_FASES[
+    indiceFase + 1
+  ]
 }
 
-export const obtenerGanador = (partido) => {
+export const obtenerGanador = (
+  partido
+) => {
   if (!partido?.ganadorId) {
     return null
   }
@@ -373,6 +477,10 @@ export const limpiarPrediccionPartido = (
 ) => {
   partido.golesEquipo1 = null
   partido.golesEquipo2 = null
+
+  partido.penalesEquipo1 = null
+  partido.penalesEquipo2 = null
+
   partido.ganadorId = null
   partido.prediccionGuardada = false
 }
