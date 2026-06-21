@@ -169,6 +169,14 @@ export const useLlaveEliminacionStore =
       }
 
       try {
+        const hayEmpate =
+          Number(
+            datosPrediccion.golesEquipo1
+          ) ===
+          Number(
+            datosPrediccion.golesEquipo2
+          )
+
         const prediccion = {
           userId: USUARIO_ID,
           partidoId: partido.id,
@@ -188,6 +196,18 @@ export const useLlaveEliminacionStore =
             datosPrediccion.golesEquipo2
           ),
 
+          penalesEquipo1: hayEmpate
+            ? Number(
+                datosPrediccion.penalesEquipo1
+              )
+            : null,
+
+          penalesEquipo2: hayEmpate
+            ? Number(
+                datosPrediccion.penalesEquipo2
+              )
+            : null,
+
           ganadorId:
             datosPrediccion.ganadorId
         }
@@ -200,6 +220,12 @@ export const useLlaveEliminacionStore =
 
         partido.golesEquipo2 =
           prediccion.golesEquipo2
+
+        partido.penalesEquipo1 =
+          prediccion.penalesEquipo1
+
+        partido.penalesEquipo2 =
+          prediccion.penalesEquipo2
 
         partido.ganadorId =
           prediccion.ganadorId
@@ -304,7 +330,9 @@ export const useLlaveEliminacionStore =
             partido.id
           )
 
-        limpiarPrediccionPartido(partido)
+        limpiarPrediccionPartido(
+          partido
+        )
 
         await limpiarDescendencia(
           partido.fase,
@@ -356,6 +384,24 @@ export const useLlaveEliminacionStore =
           prediccion.golesEquipo2
         )
 
+      partido.penalesEquipo1 =
+        prediccion.penalesEquipo1 === null ||
+        prediccion.penalesEquipo1 === undefined ||
+        prediccion.penalesEquipo1 === ''
+          ? null
+          : Number(
+              prediccion.penalesEquipo1
+            )
+
+      partido.penalesEquipo2 =
+        prediccion.penalesEquipo2 === null ||
+        prediccion.penalesEquipo2 === undefined ||
+        prediccion.penalesEquipo2 === ''
+          ? null
+          : Number(
+              prediccion.penalesEquipo2
+            )
+
       partido.ganadorId =
         prediccion.ganadorId
 
@@ -374,7 +420,10 @@ export const useLlaveEliminacionStore =
             )
 
         predicciones.sort(
-          (prediccionA, prediccionB) => {
+          (
+            prediccionA,
+            prediccionB
+          ) => {
             return (
               ORDEN_FASES.indexOf(
                 prediccionA.fase
