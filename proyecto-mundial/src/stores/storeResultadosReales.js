@@ -1,5 +1,5 @@
-import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 
 import { resultadosRealesAPI } from '@/services/resultadosRealesAPI'
 import { usePrediccionesStore } from '@/stores/storePredicciones'
