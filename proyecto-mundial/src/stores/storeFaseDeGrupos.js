@@ -1,95 +1,130 @@
 import { defineStore } from 'pinia'
-import datosProde from '@/dataProde.json'
+
+import { useDatosProdeStore } from '@/stores/storeDataProde'
 import { usePrediccionesStore } from '@/stores/storePredicciones'
 
-export const useFaseGruposStore = defineStore('faseGrupos', () => {
-  const calcularTablaGrupo = (grupo) => {
+export const useFaseGruposStore = defineStore(
+  'faseGrupos',
+  () => {
+    const dataProdeStore = useDatosProdeStore()
     const prediccionesStore = usePrediccionesStore()
 
-    const equiposDelGrupo = datosProde.paises.filter(pais => pais.grupo === grupo)
+    const calcularTablaGrupo = (grupo) => {
+      const equiposDelGrupo =
+        dataProdeStore.paises.filter((pais) => {
+          return pais.grupo === grupo
+        })
 
-    const tabla = {}
+      const tabla = {}
 
-    equiposDelGrupo.forEach(equipo => {
-      tabla[equipo.id] = {
-        id: equipo.id,
-        nombre: equipo.nombre,
-        bandera: equipo.bandera,
-        grupo: equipo.grupo,
-        pj: 0,
-        pg: 0,
-        pe: 0,
-        pp: 0,
-        gf: 0,
-        gc: 0,
-        dg: 0,
-        pts: 0
-      }
-    })
+      equiposDelGrupo.forEach((equipo) => {
+        tabla[equipo.id] = {
+          id: equipo.id,
+          nombre: equipo.nombre,
+          bandera: equipo.bandera,
+          grupo: equipo.grupo,
+          pj: 0,
+          pg: 0,
+          pe: 0,
+          pp: 0,
+          gf: 0,
+          gc: 0,
+          dg: 0,
+          pts: 0
+        }
+      })
 
-    const prediccionesDelGrupo = Object.values(prediccionesStore.predicciones)
-      .filter(prediccion => prediccion.grupo === grupo)
+      const prediccionesDelGrupo = Object.values(
+        prediccionesStore.predicciones
+      ).filter((prediccion) => {
+        return prediccion.grupo === grupo
+      })
 
-    prediccionesDelGrupo.forEach(prediccion => {
-      const equipoLocal = tabla[prediccion.local]
-      const equipoVisitante = tabla[prediccion.visitante]
+      prediccionesDelGrupo.forEach((prediccion) => {
+        const equipoLocal =
+          tabla[prediccion.local]
 
-      if (!equipoLocal || !equipoVisitante) {
-        return
-      }
+        const equipoVisitante =
+          tabla[prediccion.visitante]
 
-      const golesLocal = prediccion.golesLocal
-      const golesVisitante = prediccion.golesVisitante
+        if (!equipoLocal || !equipoVisitante) {
+          return
+        }
 
-      equipoLocal.pj++
-      equipoVisitante.pj++
+        const golesLocal =
+          Number(prediccion.golesLocal)
 
-      equipoLocal.gf += golesLocal
-      equipoLocal.gc += golesVisitante
+        const golesVisitante =
+          Number(prediccion.golesVisitante)
 
-      equipoVisitante.gf += golesVisitante
-      equipoVisitante.gc += golesLocal
+        equipoLocal.pj++
+        equipoVisitante.pj++
 
-      if (golesLocal > golesVisitante) {
-        equipoLocal.pg++
-        equipoVisitante.pp++
+        equipoLocal.gf += golesLocal
+        equipoLocal.gc += golesVisitante
 
-        equipoLocal.pts += 3
-      } else if (golesLocal < golesVisitante) {
-        equipoVisitante.pg++
-        equipoLocal.pp++
+        equipoVisitante.gf += golesVisitante
+        equipoVisitante.gc += golesLocal
 
-        equipoVisitante.pts += 3
-      } else {
-        equipoLocal.pe++
-        equipoVisitante.pe++
+        if (golesLocal > golesVisitante) {
+          equipoLocal.pg++
+          equipoVisitante.pp++
 
-        equipoLocal.pts += 1
-        equipoVisitante.pts += 1
-      }
+          equipoLocal.pts += 3
+        } else if (
+          golesLocal < golesVisitante
+        ) {
+          equipoVisitante.pg++
+          equipoLocal.pp++
 
-      equipoLocal.dg = equipoLocal.gf - equipoLocal.gc
-      equipoVisitante.dg = equipoVisitante.gf - equipoVisitante.gc
-    })
+          equipoVisitante.pts += 3
+        } else {
+          equipoLocal.pe++
+          equipoVisitante.pe++
 
-    return Object.values(tabla).sort((a, b) => {
-      if (b.pts !== a.pts) {
-        return b.pts - a.pts
-      }
+          equipoLocal.pts += 1
+          equipoVisitante.pts += 1
+        }
 
-      if (b.dg !== a.dg) {
-        return b.dg - a.dg
-      }
+        equipoLocal.dg =
+          equipoLocal.gf - equipoLocal.gc
 
-      if (b.gf !== a.gf) {
-        return b.gf - a.gf
-      }
+        equipoVisitante.dg =
+          equipoVisitante.gf -
+          equipoVisitante.gc
+      })
 
-      return a.nombre.localeCompare(b.nombre)
-    })
+      return Object.values(tabla).sort(
+        (equipoA, equipoB) => {
+          if (
+            equipoB.pts !== equipoA.pts
+          ) {
+            return (
+              equipoB.pts - equipoA.pts
+            )
+          }
+
+          if (
+            equipoB.dg !== equipoA.dg
+          ) {
+            return equipoB.dg - equipoA.dg
+          }
+
+          if (
+            equipoB.gf !== equipoA.gf
+          ) {
+            return equipoB.gf - equipoA.gf
+          }
+
+          return equipoA.nombre.localeCompare(
+            equipoB.nombre
+          )
+        }
+      )
+    }
+
+    return {
+      calcularTablaGrupo
+    }
   }
-
-  return {
-    calcularTablaGrupo
-  }
-})
+)

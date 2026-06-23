@@ -1,9 +1,8 @@
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-
 import { resultadosRealesAPI } from '@/services/resultadosRealesAPI'
+import { useDatosProdeStore } from '@/stores/storeDataProde'
 import { usePrediccionesStore } from '@/stores/storePredicciones'
-import datosProde from '@/dataProde.json'
 
 const GRUPOS = [
   'A',
@@ -27,14 +26,26 @@ export const useResultadosRealesStore = defineStore(
     const cargando = ref(false)
     const error = ref(null)
 
+    const dataProdeStore =
+      useDatosProdeStore()
+
     const prediccionesStore =
       usePrediccionesStore()
 
     /*
-      Trae los resultados reales desde la API.
-      Si ya fueron cargados, no vuelve a pedirlos.
+      Trae primero los países y partidos
+      desde el Mockachino de dataProde.
+
+      Después trae los resultados reales.
     */
     const inicializar = async () => {
+      /*
+        Aunque los resultados ya estén cargados,
+        nos aseguramos de que también estén
+        disponibles los países.
+      */
+      await dataProdeStore.inicializar()
+
       if (resultados.value.length > 0) {
         return
       }
@@ -97,7 +108,7 @@ export const useResultadosRealesStore = defineStore(
     */
     const calcularTablaGrupo = (grupo) => {
       const equiposDelGrupo =
-        datosProde.paises.filter(
+        dataProdeStore.paises.filter(
           (pais) =>
             pais &&
             pais.grupo === grupo

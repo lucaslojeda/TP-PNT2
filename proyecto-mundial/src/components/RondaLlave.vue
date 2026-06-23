@@ -59,35 +59,9 @@ const emit = defineEmits([
   'reiniciar-prediccion'
 ])
 
-/*
-  Distancia vertical entre los centros de los
-  partidos de dieciseisavos.
-*/
 const ALTO_SLOT = 190
-
-/*
-  Distancia desde el comienzo de PartidoLlave
-  hasta el centro visual de su tarjeta.
-*/
 const CENTRO_PARTIDO = 53
 
-/*
-  Altura total compartida por todas las rondas.
-
-  Hay 16 partidos iniciales y cada uno ocupa
-  un espacio vertical de 190px.
-*/
-const ALTURA_TOTAL = 16 * ALTO_SLOT
-
-/*
-  Devuelve el centro vertical de un partido.
-
-  Nivel 0: dieciseisavos
-  Nivel 1: octavos
-  Nivel 2: cuartos
-  Nivel 3: semifinales
-  Nivel 4: final
-*/
 const obtenerCentroPartido = (indice) => {
   const salto = 2 ** props.nivel
 
@@ -97,21 +71,15 @@ const obtenerCentroPartido = (indice) => {
   ) * ALTO_SLOT
 }
 
-/*
-  Posiciona cada PartidoLlave dentro de la columna.
-*/
 const obtenerPosicionPartido = (indice) => {
-  const centro = obtenerCentroPartido(indice)
+  const centro =
+    obtenerCentroPartido(indice)
 
   return {
     top: `${centro - CENTRO_PARTIDO}px`
   }
 }
 
-/*
-  Cada dos partidos de una ronda generan
-  un conector hacia el partido de la ronda siguiente.
-*/
 const conectores = computed(() => {
   if (props.esFinal) {
     return []
@@ -170,8 +138,8 @@ const reenviarReiniciarPrediccion = (
 
 <style scoped>
 .ronda-llave {
-  width: 340px;
-  min-width: 340px;
+  width: 420px;
+  min-width: 420px;
   display: flex;
   flex-direction: column;
 }
@@ -193,12 +161,17 @@ const reenviarReiniciarPrediccion = (
 .partido-posicionado {
   position: absolute;
   left: 0;
-  width: 250px;
+  width: 320px;
+  z-index: 1;
+}
+
+.partido-posicionado:focus-within {
+  z-index: 100;
 }
 
 .conector-pareja {
   position: absolute;
-  left: 250px;
+  left: 320px;
   width: 40px;
   box-sizing: border-box;
   border-top: 2px solid #b5b5b5;
@@ -211,7 +184,7 @@ const reenviarReiniciarPrediccion = (
   position: absolute;
   top: 50%;
   left: 100%;
-  width: 50px;
+  width: 60px;
   height: 2px;
   background-color: #b5b5b5;
   transform: translateY(-1px);

@@ -1,42 +1,68 @@
 <template>
   <div class="predicciones-section">
     <h2>Mis Predicciones</h2>
-    
+
     <div v-if="cargando" class="cargando">
       Cargando predicciones...
     </div>
 
-    <div v-else-if="predicciones.length === 0" class="sin-predicciones">
+    <div
+      v-else-if="predicciones.length === 0"
+      class="sin-predicciones"
+    >
       <p>No tienes predicciones guardadas aún.</p>
-      <p>¡Dirígete a la sección de predicciones para crear una!</p>
+
+      <p>
+        ¡Dirígete a la sección de predicciones para crear una!
+      </p>
     </div>
 
     <div v-else class="predicciones-grid">
-      <div v-for="prediccion in predicciones" :key="prediccion.partidoId" class="prediccion-card">
+      <div
+        v-for="prediccion in predicciones"
+        :key="prediccion.partidoId"
+        class="prediccion-card"
+      >
         <div class="prediccion-header">
-          <span class="grupo-label">{{ prediccion.grupo }}</span>
-          <span class="fecha-label">{{ formatearFecha(prediccion.fecha) }}</span>
+          <span class="grupo-label">
+            {{ prediccion.grupo }}
+          </span>
+
+          <span class="fecha-label">
+            {{ formatearFecha(prediccion.fecha) }}
+          </span>
         </div>
 
         <div class="prediccion-equipos">
           <div class="equipo">
-            <img 
-              v-if="obtenerEquipo(prediccion.local)" 
-              :src="obtenerEquipo(prediccion.local).bandera" 
+            <img
+              v-if="obtenerEquipo(prediccion.local)"
+              :src="obtenerEquipo(prediccion.local).bandera"
               :alt="obtenerEquipo(prediccion.local).nombre"
               class="bandera"
-            >
-            <span>{{ obtenerEquipo(prediccion.local)?.nombre || prediccion.local }}</span>
+            />
+
+            <span>
+              {{
+                obtenerEquipo(prediccion.local)?.nombre ||
+                prediccion.local
+              }}
+            </span>
           </div>
 
-          <div class="resultado" v-if="!editando[prediccion.partidoId]">
+          <div
+            v-if="!editando[prediccion.partidoId]"
+            class="resultado"
+          >
             <input
               type="text"
               :value="prediccion.golesLocal"
               disabled
               class="goles-input disabled"
             />
+
             <span>-</span>
+
             <input
               type="text"
               :value="prediccion.golesVisitante"
@@ -45,16 +71,22 @@
             />
           </div>
 
-          <div class="resultado-edit" v-else>
+          <div v-else class="resultado-edit">
             <input
-              v-model.number="golesEditLocal[prediccion.partidoId]"
+              v-model.number="
+                golesEditLocal[prediccion.partidoId]
+              "
               type="number"
               min="0"
               class="goles-input"
             />
+
             <span>-</span>
+
             <input
-              v-model.number="golesEditVisitante[prediccion.partidoId]"
+              v-model.number="
+                golesEditVisitante[prediccion.partidoId]
+              "
               type="number"
               min="0"
               class="goles-input"
@@ -62,45 +94,56 @@
           </div>
 
           <div class="equipo">
-            <span>{{ obtenerEquipo(prediccion.visitante)?.nombre || prediccion.visitante }}</span>
-            <img 
-              v-if="obtenerEquipo(prediccion.visitante)" 
-              :src="obtenerEquipo(prediccion.visitante).bandera" 
+            <span>
+              {{
+                obtenerEquipo(prediccion.visitante)?.nombre ||
+                prediccion.visitante
+              }}
+            </span>
+
+            <img
+              v-if="obtenerEquipo(prediccion.visitante)"
+              :src="obtenerEquipo(prediccion.visitante).bandera"
               :alt="obtenerEquipo(prediccion.visitante).nombre"
               class="bandera"
-            >
+            />
           </div>
         </div>
 
         <div class="prediccion-acciones">
-          <button 
+          <button
             v-if="!editando[prediccion.partidoId]"
-            @click="iniciarEdicion(prediccion)"
             class="btn-editar-prediccion"
+            @click="iniciarEdicion(prediccion)"
           >
-             Editar
+            Editar
           </button>
 
           <div v-else class="btn-grupo">
-            <button 
-              @click="guardarEdicion(prediccion)"
+            <button
               class="btn-guardar"
+              @click="guardarEdicion(prediccion)"
             >
               ✓ Guardar
             </button>
-            <button 
-              @click="cancelarEdicion(prediccion.partidoId)"
+
+            <button
               class="btn-cancelar"
+              @click="
+                cancelarEdicion(prediccion.partidoId)
+              "
             >
               ✗ Cancelar
             </button>
           </div>
 
-          <button 
-            @click="eliminarPrediccion(prediccion.partidoId)"
+          <button
             class="btn-eliminar"
+            @click="
+              eliminarPrediccion(prediccion.partidoId)
+            "
           >
-             Eliminar
+            Eliminar
           </button>
         </div>
       </div>
@@ -109,10 +152,16 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import datosProde from '@/dataProde.json'
+import {
+  computed,
+  onMounted,
+  ref
+} from 'vue'
+
+import { useDatosProdeStore } from '@/stores/storeDataProde'
 import { usePrediccionesStore } from '@/stores/storePredicciones'
 
+const dataProdeStore = useDatosProdeStore()
 const prediccionesStore = usePrediccionesStore()
 
 const editando = ref({})
@@ -122,34 +171,58 @@ const golesEditVisitante = ref({})
 const cargando = ref(false)
 
 const predicciones = computed(() => {
-  return prediccionesStore.obtenerTodasLasPredicciones().sort((a, b) => {
-    return new Date(b.fecha) - new Date(a.fecha)
+  return [
+    ...prediccionesStore.obtenerTodasLasPredicciones()
+  ].sort((prediccionA, prediccionB) => {
+    return (
+      new Date(prediccionB.fecha) -
+      new Date(prediccionA.fecha)
+    )
   })
 })
 
-onMounted(() => {
-  cargarPredicciones()
+onMounted(async () => {
+  await cargarDatos()
 })
 
-const cargarPredicciones = async () => {
+const cargarDatos = async () => {
   cargando.value = true
-  await prediccionesStore.cargarPredicciones()
-  cargando.value = false
+
+  try {
+    await dataProdeStore.inicializar()
+    await prediccionesStore.cargarPredicciones()
+  } catch (error) {
+    console.error(
+      'Error al cargar las predicciones:',
+      error
+    )
+  } finally {
+    cargando.value = false
+  }
 }
 
 const obtenerEquipo = (idEquipo) => {
-  return datosProde.paises.find(pais => pais.id === idEquipo)
+  return dataProdeStore.obtenerPaisPorId(idEquipo)
 }
 
 const formatearFecha = (fecha) => {
+  if (!fecha) {
+    return ''
+  }
+
   const partes = fecha.split('-')
+
   return `${partes[2]}/${partes[1]}/${partes[0]}`
 }
 
 const iniciarEdicion = (prediccion) => {
   editando.value[prediccion.partidoId] = true
-  golesEditLocal.value[prediccion.partidoId] = prediccion.golesLocal
-  golesEditVisitante.value[prediccion.partidoId] = prediccion.golesVisitante
+
+  golesEditLocal.value[prediccion.partidoId] =
+    prediccion.golesLocal
+
+  golesEditVisitante.value[prediccion.partidoId] =
+    prediccion.golesVisitante
 }
 
 const guardarEdicion = async (prediccion) => {
@@ -174,14 +247,23 @@ const guardarEdicion = async (prediccion) => {
 
 const cancelarEdicion = (partidoId) => {
   editando.value[partidoId] = false
+
   delete golesEditLocal.value[partidoId]
   delete golesEditVisitante.value[partidoId]
 }
 
 const eliminarPrediccion = async (partidoId) => {
-  if (confirm('¿Estás seguro de que quieres eliminar esta predicción?')) {
-    await prediccionesStore.reiniciarPrediccion(partidoId)
+  const confirmar = confirm(
+    '¿Estás seguro de que quieres eliminar esta predicción?'
+  )
+
+  if (!confirmar) {
+    return
   }
+
+  await prediccionesStore.reiniciarPrediccion(
+    partidoId
+  )
 }
 </script>
 
@@ -217,7 +299,10 @@ const eliminarPrediccion = async (partidoId) => {
 
 .predicciones-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(300px, 1fr)
+  );
   gap: 20px;
 }
 
