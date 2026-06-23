@@ -13,4 +13,4 @@ const prediccionesStore = usePrediccionesStore()
 onMounted(async () => {
   await prediccionesStore.cargarPredicciones()
 })
-</script>
+</script> 
