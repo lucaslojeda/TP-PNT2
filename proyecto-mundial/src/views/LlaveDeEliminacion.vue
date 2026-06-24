@@ -110,7 +110,7 @@ const baseConfigBanderas = {
   'Irán': { bg: 'https://flagcdn.com/w1280/ir.png', tarjetaBg: 'rgba(28, 58, 39, 0.35)', borde: '#239e46', texto: '#da251d' }
 }
 
-const urlBanderaFondo = ref('')
+const urlBanderaFondo = ref('/imagenes/logo2026.png')
 const colorTarjetaBg = ref('rgba(31, 31, 31, 0.9)')
 const colorBordeLlave = ref('rgba(255, 255, 255, 0.1)')
 const colorTextoRonda = ref('#00d26a')
@@ -143,7 +143,7 @@ watch(() => llaveStore.campeon, (nuevoCampeon) => {
       transicionCampeon.value = false
     }, 1600)
   } else {
-    urlBanderaFondo.value = ''
+    urlBanderaFondo.value = '/imagenes/logo2026.png'
     colorTarjetaBg.value = 'rgba(31, 31, 31, 0.9)'
     colorBordeLlave.value = 'rgba(255, 255, 255, 0.1)'
     colorTextoRonda.value = '#00d26a'
