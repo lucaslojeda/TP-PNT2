@@ -43,7 +43,10 @@
         pattern="[0-9]*"
         class="score-input"
         placeholder=""
-        :disabled="prediccionGuardada"
+        :disabled="
+          prediccionGuardada ||
+          operacionEnCurso
+        "
         @input="validarGolesLocal"
       />
 
@@ -56,7 +59,10 @@
         pattern="[0-9]*"
         class="score-input"
         placeholder=""
-        :disabled="prediccionGuardada"
+        :disabled="
+          prediccionGuardada ||
+          operacionEnCurso
+        "
         @input="validarGolesVisitante"
       />
     </div>
@@ -65,20 +71,39 @@
       {{ estadoPrediccion }}
     </p>
 
+    <p
+      v-if="mensajeError"
+      class="prediction-error"
+    >
+      {{ mensajeError }}
+    </p>
+
     <button
       class="save-button"
-      :disabled="prediccionGuardada"
+      :disabled="
+        prediccionGuardada ||
+        operacionEnCurso
+      "
       @click="guardarPrediccion"
     >
-      Guardar predicción
+      {{
+        operacionEnCurso
+          ? 'Guardando...'
+          : 'Guardar predicción'
+      }}
     </button>
 
     <button
       v-if="prediccionGuardada"
       class="reset-button"
+      :disabled="operacionEnCurso"
       @click="reiniciarPrediccion"
     >
-      Reiniciar predicción
+      {{
+        operacionEnCurso
+          ? 'Eliminando...'
+          : 'Reiniciar predicción'
+      }}
     </button>
   </article>
 </template>
@@ -102,6 +127,8 @@ const prediccionesStore = usePrediccionesStore()
 const golesLocal = ref('')
 const golesVisitante = ref('')
 const prediccionGuardada = ref(false)
+const operacionEnCurso = ref(false)
+const mensajeError = ref('')
 
 const prediccionExistente = computed(() => {
   return prediccionesStore.obtenerPrediccion(
@@ -112,6 +139,8 @@ const prediccionExistente = computed(() => {
 watch(
   prediccionExistente,
   (prediccion) => {
+    mensajeError.value = ''
+
     if (prediccion) {
       golesLocal.value = String(
         prediccion.golesLocal
@@ -191,26 +220,51 @@ const guardarPrediccion = async () => {
     golesVisitante.value === ''
   ) {
     prediccionGuardada.value = false
+    mensajeError.value =
+      'Debés ingresar los dos resultados.'
+
     return
   }
 
-  await prediccionesStore.guardarPrediccion(
-    props.partido,
-    golesLocal.value,
-    golesVisitante.value
-  )
+  operacionEnCurso.value = true
+  mensajeError.value = ''
 
-  prediccionGuardada.value = true
+  try {
+    await prediccionesStore.guardarPrediccion(
+      props.partido,
+      golesLocal.value,
+      golesVisitante.value
+    )
+
+    prediccionGuardada.value = true
+  } catch (error) {
+    mensajeError.value =
+      error.message ||
+      'No se pudo guardar la predicción.'
+  } finally {
+    operacionEnCurso.value = false
+  }
 }
 
 const reiniciarPrediccion = async () => {
-  await prediccionesStore.reiniciarPrediccion(
-    props.partido.id
-  )
+  operacionEnCurso.value = true
+  mensajeError.value = ''
 
-  golesLocal.value = ''
-  golesVisitante.value = ''
-  prediccionGuardada.value = false
+  try {
+    await prediccionesStore.reiniciarPrediccion(
+      props.partido.id
+    )
+
+    golesLocal.value = ''
+    golesVisitante.value = ''
+    prediccionGuardada.value = false
+  } catch (error) {
+    mensajeError.value =
+      error.message ||
+      'No se pudo eliminar la predicción.'
+  } finally {
+    operacionEnCurso.value = false
+  }
 }
 </script>
 
@@ -323,6 +377,14 @@ const reiniciarPrediccion = async () => {
   margin: 8px 0 14px;
 }
 
+.prediction-error {
+  margin: -4px 0 12px;
+  color: #ff7676;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+}
+
 .save-button {
   display: block;
   margin: 0 auto;
@@ -369,6 +431,11 @@ const reiniciarPrediccion = async () => {
 .reset-button:hover {
   background-color: #ff5c5c;
   color: #111;
+}
+
+.reset-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 @media (max-width: 600px) {

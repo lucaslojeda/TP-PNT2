@@ -212,8 +212,14 @@ export const useLlaveEliminacionStore =
             datosPrediccion.ganadorId
         }
 
-        await prediccionesLlaveAPI
-          .guardarPrediccion(prediccion)
+        const prediccionGuardada =
+          await prediccionesLlaveAPI
+            .guardarPrediccion(prediccion)
+
+        resultadosRealesStore
+          .registrarPrediccionLlave(
+            prediccionGuardada
+          )
 
         partido.golesEquipo1 =
           prediccion.golesEquipo1
@@ -281,6 +287,11 @@ export const useLlaveEliminacionStore =
             USUARIO_ID,
             partidoSiguiente.id
           )
+
+        resultadosRealesStore
+          .quitarPrediccionLlave(
+            partidoSiguiente.id
+          )
       }
 
       limpiarPrediccionPartido(
@@ -327,6 +338,11 @@ export const useLlaveEliminacionStore =
         await prediccionesLlaveAPI
           .eliminarPrediccion(
             USUARIO_ID,
+            partido.id
+          )
+
+        resultadosRealesStore
+          .quitarPrediccionLlave(
             partido.id
           )
 
@@ -437,6 +453,11 @@ export const useLlaveEliminacionStore =
 
         predicciones.forEach(
           (prediccion) => {
+            resultadosRealesStore
+              .registrarPrediccionLlave(
+                prediccion
+              )
+
             aplicarPrediccionGuardada(
               prediccion
             )

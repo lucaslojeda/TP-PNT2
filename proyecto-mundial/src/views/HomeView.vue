@@ -83,6 +83,16 @@
             </p>
 
             <p>
+              Fase de grupos:
+              {{ resultadosStore.puntajeFaseGrupos }}
+            </p>
+
+            <p>
+              Llave de eliminación:
+              {{ resultadosStore.puntajeLlaveEliminacion }}
+            </p>
+
+            <p>
               Predicciones guardadas:
               {{ totalPrediccionesGuardadas }}
             </p>

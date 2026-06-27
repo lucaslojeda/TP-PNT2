@@ -1,3 +1,5 @@
+import { validarDatosProde } from '@/utils/validacionesDatos'
+
 const API_URL =
   'https://www.mockachino.com/890df2f4-2cb8-4a/dataProde'
 
@@ -13,14 +15,6 @@ export const dataProdeAPI = {
 
     const datos = await response.json()
 
-    return {
-      paises: Array.isArray(datos.paises)
-        ? datos.paises
-        : [],
-
-      partidos: Array.isArray(datos.partidos)
-        ? datos.partidos
-        : []
-    }
+    return validarDatosProde(datos)
   }
 }

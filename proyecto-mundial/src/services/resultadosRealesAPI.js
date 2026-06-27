@@ -1,3 +1,8 @@
+import {
+  validarRanking,
+  validarResultadosFaseGrupos
+} from '@/utils/validacionesDatos'
+
 const API_URL = 'https://www.mockachino.com/5a5f72ee-1053-44/resultadosReales'
 
 export const resultadosRealesAPI = {
@@ -5,7 +10,10 @@ export const resultadosRealesAPI = {
     const response = await fetch(API_URL)
     if (!response.ok) throw new Error('Error al obtener resultados')
     const data = await response.json()
-    return data.resultados
+
+    return validarResultadosFaseGrupos(
+      data.resultados
+    )
   }
 }
 
@@ -16,6 +24,9 @@ export const rankingAPI = {
     const response = await fetch(URL_RANKING)
     if (!response.ok) throw new Error('Error al obtener el ranking global')
     const data = await response.json()
-    return data.usuarios
+
+    return validarRanking(
+      data.usuarios
+    )
   }
 }

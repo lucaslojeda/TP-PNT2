@@ -1,3 +1,8 @@
+import {
+  validarPrediccionLlave,
+  validarPrediccionesLlave
+} from '@/utils/validacionesDatos'
+
 const API_URL =
   'https://6a29a9d0f59cb8f65f1d75f5.mockapi.io/prediccionesLlaveEliminacion'
 
@@ -13,7 +18,9 @@ export const prediccionesLlaveAPI = {
 
     const datos = await response.json()
 
-    return Array.isArray(datos) ? datos : []
+    return validarPrediccionesLlave(
+      datos
+    )
   },
 
   obtenerPorUsuario: async (userId) => {
@@ -38,6 +45,11 @@ export const prediccionesLlaveAPI = {
   },
 
   guardarPrediccion: async (prediccion) => {
+    validarPrediccionLlave(
+      prediccion,
+      'prediccionLlaveParaGuardar'
+    )
+
     const prediccionExistente =
       await prediccionesLlaveAPI.buscarPrediccion(
         prediccion.userId,
@@ -66,7 +78,14 @@ export const prediccionesLlaveAPI = {
       )
     }
 
-    return await response.json()
+    const prediccionGuardada =
+      await response.json()
+
+    return validarPrediccionLlave(
+      prediccionGuardada,
+      'respuestaPrediccionLlave',
+      true
+    )
   },
 
   eliminarPrediccion: async (userId, partidoId) => {
