@@ -7,22 +7,31 @@ const USUARIO_ID = 'usuario1'
 export const usePrediccionesStore = defineStore('predicciones', () => {
   const predicciones = ref({})
   const cargando = ref(false)
+  const error = ref(null)
 
   const cargarPredicciones = async () => {
     cargando.value = true
+    error.value = null
 
     try {
-      const datos = await mockPrediccionesAPI.obtenerPredicciones()
+      const datos =
+        await mockPrediccionesAPI
+          .obtenerPredicciones(
+            USUARIO_ID
+          )
 
       predicciones.value = {}
 
-      Object.values(datos).forEach((prediccion) => {
-        if (prediccion.userId === USUARIO_ID) {
-          predicciones.value[prediccion.partidoId] = prediccion
+      Object.values(datos).forEach(
+        (prediccion) => {
+          predicciones.value[
+            prediccion.partidoId
+          ] = prediccion
         }
-      })
-    } catch (error) {
-      console.error('Error al cargar predicciones:', error)
+      )
+    } catch (err) {
+      console.error('Error al cargar predicciones:', err)
+      error.value = err.message
     } finally {
       cargando.value = false
     }
@@ -42,18 +51,22 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
       golesVisitante: Number(golesVisitante)
     }
 
+    error.value = null
+
     try {
       const prediccionGuardada = await mockPrediccionesAPI.guardarPrediccion(prediccion)
 
       predicciones.value[partido.id] = prediccionGuardada
-    } catch (error) {
-      console.error('Error al guardar predicción:', error)
+
+      return prediccionGuardada
+    } catch (err) {
+      console.error('Error al guardar predicción:', err)
+      error.value = err.message
+      throw err
     }
   }
 
   const actualizarPrediccion = async (partido, golesLocal, golesVisitante) => {
-    const prediccionExistente = predicciones.value[partido.id]
-
     const prediccion = {
       userId: USUARIO_ID,
       partidoId: partido.id,
@@ -67,31 +80,43 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
       golesVisitante: Number(golesVisitante)
     }
 
+    error.value = null
+
     try {
-      if (prediccionExistente?.id) {
-        const prediccionActualizada = await mockPrediccionesAPI.actualizarPrediccion(
-          prediccionExistente.id,
-          prediccion
-        )
+      const prediccionActualizada =
+        await mockPrediccionesAPI
+          .guardarPrediccion(
+            prediccion
+          )
 
-        predicciones.value[partido.id] = prediccionActualizada
-      } else {
-        const prediccionGuardada = await mockPrediccionesAPI.guardarPrediccion(prediccion)
+      predicciones.value[partido.id] =
+        prediccionActualizada
 
-        predicciones.value[partido.id] = prediccionGuardada
-      }
-    } catch (error) {
-      console.error('Error al actualizar predicción:', error)
+      return prediccionActualizada
+    } catch (err) {
+      console.error('Error al actualizar predicción:', err)
+      error.value = err.message
+      throw err
     }
   }
 
   const reiniciarPrediccion = async (partidoId) => {
+    error.value = null
+
     try {
-      await mockPrediccionesAPI.eliminarPrediccion(partidoId)
+      await mockPrediccionesAPI
+        .eliminarPrediccion(
+          USUARIO_ID,
+          partidoId
+        )
 
       delete predicciones.value[partidoId]
-    } catch (error) {
-      console.error('Error al eliminar predicción:', error)
+
+      return true
+    } catch (err) {
+      console.error('Error al eliminar predicción:', err)
+      error.value = err.message
+      throw err
     }
   }
 
@@ -104,18 +129,26 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
   }
 
   const limpiarTodas = async () => {
+    error.value = null
+
     try {
-      await mockPrediccionesAPI.limpiarTodas()
+      await mockPrediccionesAPI
+        .limpiarTodas(USUARIO_ID)
 
       predicciones.value = {}
-    } catch (error) {
-      console.error('Error al limpiar predicciones:', error)
+
+      return true
+    } catch (err) {
+      console.error('Error al limpiar predicciones:', err)
+      error.value = err.message
+      throw err
     }
   }
 
   return {
     predicciones,
     cargando,
+    error,
     cargarPredicciones,
     guardarPrediccion,
     actualizarPrediccion,

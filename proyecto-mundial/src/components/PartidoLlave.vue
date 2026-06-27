@@ -373,33 +373,32 @@ const limpiarPenalesEquipo2 = () => {
 
 <style scoped>
 .partido-llave {
-  position: relative;
   display: flex;
   flex-direction: column;
-  width: 320px;
+  width: 280px;
+  background: #1f1f1f;
+  border: 1px solid #3b3b3b;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .partido-contenido {
   display: flex;
   align-items: stretch;
-  gap: 6px;
+  gap: 0;
 }
 
 .cruce {
-  width: 220px;
-  overflow: hidden;
-  background-color: #1f1f1f;
-  border: 1px solid #3b3b3b;
-  border-radius: 10px;
+  flex: 1;
 }
 
 .equipo {
-  min-height: 50px;
+  min-height: 46px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px;
+  gap: 8px;
+  padding: 8px 10px;
   box-sizing: border-box;
   color: white;
 }
@@ -412,72 +411,78 @@ const limpiarPenalesEquipo2 = () => {
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .bandera {
-  width: 32px;
-  height: 22px;
+  width: 28px;
+  height: 19px;
   flex-shrink: 0;
   object-fit: cover;
   border: 1px solid #555;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .nombre-equipo {
   overflow: hidden;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.input-goles,
-.input-penales {
-  width: 42px;
-  height: 32px;
+.input-goles {
+  width: 38px;
+  height: 28px;
   box-sizing: border-box;
   border: 1px solid #555;
-  border-radius: 6px;
-  background-color: #2c2c2c;
+  border-radius: 5px;
+  background: #2c2c2c;
   color: white;
   text-align: center;
   font-weight: 700;
+  font-size: 0.9rem;
 }
 
-.input-goles:disabled,
-.input-penales:disabled {
+.input-goles:disabled {
   cursor: not-allowed;
   opacity: 0.7;
 }
 
 .penales-laterales {
-  width: 64px;
-  box-sizing: border-box;
-
+  width: 56px;
   display: grid;
-  grid-template-rows: 18px 1fr 1fr;
+  grid-template-rows: 16px 1fr 1fr;
   justify-items: center;
   align-items: center;
   gap: 2px;
-
-  padding: 4px 6px;
-
-  border: 1px solid #4a4a4a;
-  border-radius: 8px;
-  background-color: #272727;
+  padding: 4px 4px;
+  border-left: 1px solid #4a4a4a;
+  background: #272727;
   color: white;
 }
 
 .penales-etiqueta {
   color: #ccc;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 700;
 }
 
 .input-penales {
-  width: 40px;
-  height: 32px;
+  width: 36px;
+  height: 28px;
+  box-sizing: border-box;
+  border: 1px solid #555;
+  border-radius: 5px;
+  background: #2c2c2c;
+  color: white;
+  text-align: center;
+  font-weight: 700;
+}
+
+.input-penales:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .ganador {
@@ -485,19 +490,31 @@ const limpiarPenalesEquipo2 = () => {
   color: #64f092;
 }
 
+/* Botones dentro del partido, ocultos hasta hover */
 .acciones {
-  width: 220px;
   display: flex;
   justify-content: center;
-  margin-top: 8px;
+  gap: 6px;
+  padding: 0 10px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease, padding 0.2s ease;
+}
+
+.partido-llave:hover .acciones {
+  max-height: 44px;
+  padding: 6px 10px;
 }
 
 .boton {
-  padding: 7px 14px;
+  flex: 1;
+  padding: 5px 8px;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
   font-weight: 700;
+  font-size: 0.78rem;
+  white-space: nowrap;
 }
 
 .boton:disabled {
@@ -505,21 +522,13 @@ const limpiarPenalesEquipo2 = () => {
   opacity: 0.5;
 }
 
-.guardar {
-  background-color: #1e88e5;
-  color: white;
-}
-
-.reiniciar {
-  background-color: #d84343;
-  color: white;
-}
+.guardar { background: #1e88e5; color: white; }
+.reiniciar { background: #d84343; color: white; }
 
 .mensaje-error {
-  width: 220px;
-  margin: 6px 0 0;
+  padding: 4px 10px;
   color: #ff7676;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   text-align: center;
 }
 </style>

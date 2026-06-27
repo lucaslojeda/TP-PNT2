@@ -1,9 +1,5 @@
 <template>
-  <div 
-    class="llave-container" 
-    :class="{ 'efecto-campeon-activo': transicionCampeon }"
-    :style="estilosDinamicos"
-  >
+  <div class="llave-container" :class="{ 'efecto-campeon-activo': transicionCampeon }" :style="estilosDinamicos">
     <Sidebar />
 
     <main class="llave-content">
@@ -15,91 +11,59 @@
       <p v-if="llaveStore.cargando" class="mensaje-estado">Cargando llave...</p>
       <p v-if="llaveStore.error" class="mensaje-error">{{ llaveStore.error }}</p>
 
-      <div
-        ref="llaveScroll"
-        class="llave-scroll"
-        @scroll="sincronizarDesdeLlave"
-      >
-        <section
-          v-if="!llaveStore.cargando"
-          ref="llaveTablero"
-          class="llave-tablero"
-        >
-          <RondaLlave
-            titulo="Dieciseisavos"
-            :partidos="llaveStore.partidosDieciseisavos"
-            :nivel="0"
-            @guardar-prediccion="llaveStore.guardarPrediccion"
-            @reiniciar-prediccion="llaveStore.reiniciarPrediccion"
-          />
+      <div ref="llaveScroll" class="llave-scroll" @scroll="sincronizarDesdeLlave">
+        <section v-if="!llaveStore.cargando" ref="llaveTablero" class="llave-tablero">
 
-          <RondaLlave
-            titulo="Octavos"
-            :partidos="llaveStore.partidosOctavos"
-            :nivel="1"
-            @guardar-prediccion="llaveStore.guardarPrediccion"
-            @reiniciar-prediccion="llaveStore.reiniciarPrediccion"
-          />
+          <!-- LADO IZQUIERDO -->
+          <RondaLlave titulo="Dieciseisavos" :partidos="llaveStore.partidosDieciseisavos.slice(0, 8)" :nivel="0"
+            lado="izquierdo" @guardar-prediccion="llaveStore.guardarPrediccion"
+            @reiniciar-prediccion="llaveStore.reiniciarPrediccion" />
 
-          <RondaLlave
-            titulo="Cuartos"
-            :partidos="llaveStore.partidosCuartos"
-            :nivel="2"
-            @guardar-prediccion="llaveStore.guardarPrediccion"
-            @reiniciar-prediccion="llaveStore.reiniciarPrediccion"
-          />
+          <RondaLlave titulo="Octavos" :partidos="llaveStore.partidosOctavos.slice(0, 4)" :nivel="1" lado="izquierdo"
+            @guardar-prediccion="llaveStore.guardarPrediccion" @reiniciar-prediccion="llaveStore.reiniciarPrediccion" />
 
-          <RondaLlave
-            titulo="Semifinales"
-            :partidos="llaveStore.partidosSemifinales"
-            :nivel="3"
-            @guardar-prediccion="llaveStore.guardarPrediccion"
-            @reiniciar-prediccion="llaveStore.reiniciarPrediccion"
-          />
+          <RondaLlave titulo="Cuartos" :partidos="llaveStore.partidosCuartos.slice(0, 2)" :nivel="2" lado="izquierdo"
+            @guardar-prediccion="llaveStore.guardarPrediccion" @reiniciar-prediccion="llaveStore.reiniciarPrediccion" />
 
-          <RondaLlave
-            titulo="Final"
-            :partidos="llaveStore.partidosFinal"
-            :nivel="4"
-            :es-final="true"
-            @guardar-prediccion="llaveStore.guardarPrediccion"
-            @reiniciar-prediccion="llaveStore.reiniciarPrediccion"
-          />
+          <RondaLlave titulo="Semifinales" :partidos="llaveStore.partidosSemifinales.slice(0, 1)" :nivel="3"
+            lado="izquierdo" @guardar-prediccion="llaveStore.guardarPrediccion"
+            @reiniciar-prediccion="llaveStore.reiniciarPrediccion" />
+
+          <!-- CENTRO - FINAL -->
+          <RondaLlave titulo="Final" :partidos="llaveStore.partidosFinal" :nivel="4" :es-final="true" lado="centro"
+            @guardar-prediccion="llaveStore.guardarPrediccion" @reiniciar-prediccion="llaveStore.reiniciarPrediccion" />
+
+          <!-- LADO DERECHO -->
+          <RondaLlave titulo="Semifinales" :partidos="llaveStore.partidosSemifinales.slice(1, 2)" :nivel="3"
+            lado="derecho" @guardar-prediccion="llaveStore.guardarPrediccion"
+            @reiniciar-prediccion="llaveStore.reiniciarPrediccion" />
+
+          <RondaLlave titulo="Cuartos" :partidos="llaveStore.partidosCuartos.slice(2, 4)" :nivel="2" lado="derecho"
+            @guardar-prediccion="llaveStore.guardarPrediccion" @reiniciar-prediccion="llaveStore.reiniciarPrediccion" />
+
+          <RondaLlave titulo="Octavos" :partidos="llaveStore.partidosOctavos.slice(4, 8)" :nivel="1" lado="derecho"
+            @guardar-prediccion="llaveStore.guardarPrediccion" @reiniciar-prediccion="llaveStore.reiniciarPrediccion" />
+
+          <RondaLlave titulo="Dieciseisavos" :partidos="llaveStore.partidosDieciseisavos.slice(8, 16)" :nivel="0"
+            lado="derecho" @guardar-prediccion="llaveStore.guardarPrediccion"
+            @reiniciar-prediccion="llaveStore.reiniciarPrediccion" />
+
         </section>
       </div>
 
-      <div
-        v-if="!llaveStore.cargando"
-        ref="barraScroll"
-        class="barra-horizontal"
-        @scroll="sincronizarDesdeBarra"
-      >
-        <div
-          class="barra-contenido"
-          :style="{ width: `${anchoTablero}px` }"
-        ></div>
+      <div v-if="!llaveStore.cargando" ref="barraScroll" class="barra-horizontal" @scroll="sincronizarDesdeBarra">
+        <div class="barra-contenido" :style="{ width: `${anchoTablero}px` }"></div>
       </div>
 
-      <section
-        v-if="llaveStore.campeon"
-        class="campeon-container"
-      >
+      <section v-if="llaveStore.campeon" class="campeon-container">
         <div class="campeon-card card-premium-vidrio">
           <div class="trofeo-real-wrapper">
-            <img 
-              :src="urlTrofeoReal" 
-              alt="Copa del Mundo" 
-              class="trofeo-real-imagen"
-            />
+            <img :src="urlTrofeoReal" alt="Copa del Mundo" class="trofeo-real-imagen" />
           </div>
-
           <h2>Campeón predicho</h2>
           <div class="bandera-wrapper">
-            <img
-              :src="llaveStore.campeon.bandera"
-              :alt="`Bandera de ${llaveStore.campeon.nombre}`"
-              class="campeon-bandera"
-            />
+            <img :src="llaveStore.campeon.bandera" :alt="`Bandera de ${llaveStore.campeon.nombre}`"
+              class="campeon-bandera" />
           </div>
           <p>{{ llaveStore.campeon.nombre }}</p>
         </div>
@@ -131,80 +95,26 @@ const barraScroll = ref(null)
 const anchoTablero = ref(0)
 let sincronizando = false
 
-// Estado para controlar la animación dorada inicial
 const transicionCampeon = ref(false)
 
-// Configuración de banderas de fondo de alta resolución y los colores de las tarjetas
 const baseConfigBanderas = {
-  'Argentina': {
-    bg: '/imagenes/argentina.png',
-    tarjetaBg: 'rgba(24, 43, 64, 0.45)', 
-    borde: '#74acdf', 
-    texto: '#f6b426'  
-  },
-  'Portugal': {
-    bg: '/imagenes/portugal.png',
-    tarjetaBg: 'rgba(25, 15, 15, 0.45)',
-    borde: '#da121a',
-    texto: '#046a38'
-  },
-  'Corea del Sur': { 
-    bg: '/imagenes/corea.png', 
-    tarjetaBg: 'rgba(10, 17, 40, 0.45)', 
-    borde: '#0047a0', 
-    texto: '#cd2e3a' 
-  },
-  'Marruecos': { 
-    bg: '/imagenes/marruecos.png', 
-    tarjetaBg: 'rgba(20, 35, 25, 0.45)', 
-    borde: '#c1272d', 
-    texto: '#006233' 
-  },
-  'México': { 
-    bg: 'https://flagcdn.com/w1280/mx.png', 
-    tarjetaBg: 'rgba(2, 44, 22, 0.35)', 
-    borde: '#14a552', 
-    texto: '#ce1126' 
-  },
-  'Suecia': { 
-    bg: 'https://flagcdn.com/w1280/se.png', 
-    tarjetaBg: 'rgba(0, 47, 95, 0.35)', 
-    borde: '#006aa7', 
-    texto: '#fecc00' 
-  },
-  'Bosnia y He...': { 
-    bg: 'https://flagcdn.com/w1280/ba.png', 
-    tarjetaBg: 'rgba(0, 30, 98, 0.35)', 
-    borde: '#002f6c', 
-    texto: '#ffcc00' 
-  },
-  'Haití': { 
-    bg: 'https://flagcdn.com/w1280/ht.png', 
-    tarjetaBg: 'rgba(26, 26, 46, 0.35)', 
-    borde: '#00209f', 
-    texto: '#d21034' 
-  },
-  'Túnez': { 
-    bg: 'https://flagcdn.com/w1280/tn.png', 
-    tarjetaBg: 'rgba(74, 14, 23, 0.35)', 
-    borde: '#e41b13', 
-    texto: '#ffffff' 
-  },
-  'Irán': { 
-    bg: 'https://flagcdn.com/w1280/ir.png', 
-    tarjetaBg: 'rgba(28, 58, 39, 0.35)', 
-    borde: '#239e46', 
-    texto: '#da251d' 
-  }
+  'Argentina': { bg: '/imagenes/argentina.png', tarjetaBg: 'rgba(24, 43, 64, 0.45)', borde: '#74acdf', texto: '#f6b426' },
+  'Portugal': { bg: '/imagenes/portugal.png', tarjetaBg: 'rgba(25, 15, 15, 0.45)', borde: '#da121a', texto: '#046a38' },
+  'Corea del Sur': { bg: '/imagenes/corea.png', tarjetaBg: 'rgba(10, 17, 40, 0.45)', borde: '#0047a0', texto: '#cd2e3a' },
+  'Marruecos': { bg: '/imagenes/marruecos.png', tarjetaBg: 'rgba(20, 35, 25, 0.45)', borde: '#c1272d', texto: '#006233' },
+  'México': { bg: 'https://flagcdn.com/w1280/mx.png', tarjetaBg: 'rgba(2, 44, 22, 0.35)', borde: '#14a552', texto: '#ce1126' },
+  'Suecia': { bg: 'https://flagcdn.com/w1280/se.png', tarjetaBg: 'rgba(0, 47, 95, 0.35)', borde: '#006aa7', texto: '#fecc00' },
+  'Bosnia y He...': { bg: 'https://flagcdn.com/w1280/ba.png', tarjetaBg: 'rgba(0, 30, 98, 0.35)', borde: '#002f6c', texto: '#ffcc00' },
+  'Haití': { bg: 'https://flagcdn.com/w1280/ht.png', tarjetaBg: 'rgba(26, 26, 46, 0.35)', borde: '#00209f', texto: '#d21034' },
+  'Túnez': { bg: 'https://flagcdn.com/w1280/tn.png', tarjetaBg: 'rgba(74, 14, 23, 0.35)', borde: '#e41b13', texto: '#ffffff' },
+  'Irán': { bg: 'https://flagcdn.com/w1280/ir.png', tarjetaBg: 'rgba(28, 58, 39, 0.35)', borde: '#239e46', texto: '#da251d' }
 }
 
-// Variables reactivas vinculadas al CSS
-const urlBanderaFondo = ref('')
+const urlBanderaFondo = ref('/imagenes/logo2026.png')
 const colorTarjetaBg = ref('rgba(31, 31, 31, 0.9)')
 const colorBordeLlave = ref('rgba(255, 255, 255, 0.1)')
 const colorTextoRonda = ref('#00d26a')
 
-// Estilos dinámicos inyectados
 const estilosDinamicos = computed(() => ({
   '--bg-bandera': urlBanderaFondo.value ? `url(${urlBanderaFondo.value})` : 'none',
   '--tarjeta-bg': colorTarjetaBg.value,
@@ -215,14 +125,13 @@ const estilosDinamicos = computed(() => ({
 watch(() => llaveStore.campeon, (nuevoCampeon) => {
   if (nuevoCampeon) {
     transicionCampeon.value = true
-    
     colorTarjetaBg.value = 'rgba(44, 34, 5, 0.9)'
     colorBordeLlave.value = '#ffd700'
     colorTextoRonda.value = '#fff3a3'
 
     setTimeout(() => {
-      const config = baseConfigBanderas[nuevoCampeon.nombre] || { 
-        bg: '', tarjetaBg: 'rgba(31, 31, 31, 0.9)', borde: '#00d26a', texto: '#00d26a' 
+      const config = baseConfigBanderas[nuevoCampeon.nombre] || {
+        bg: '', tarjetaBg: 'rgba(31, 31, 31, 0.9)', borde: '#00d26a', texto: '#00d26a'
       }
       urlBanderaFondo.value = config.bg
       colorTarjetaBg.value = config.tarjetaBg
@@ -234,7 +143,7 @@ watch(() => llaveStore.campeon, (nuevoCampeon) => {
       transicionCampeon.value = false
     }, 1600)
   } else {
-    urlBanderaFondo.value = ''
+    urlBanderaFondo.value = '/imagenes/logo2026.png'
     colorTarjetaBg.value = 'rgba(31, 31, 31, 0.9)'
     colorBordeLlave.value = 'rgba(255, 255, 255, 0.1)'
     colorTextoRonda.value = '#00d26a'
@@ -292,7 +201,7 @@ onUnmounted(() => {
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
   background: linear-gradient(rgba(20, 20, 20, 0.65), rgba(20, 20, 20, 0.85)),
-              url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1280') no-repeat right 10% center;
+    url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1280') no-repeat right 10% center;
   background-size: contain;
   opacity: 0.45;
   pointer-events: none;
@@ -323,9 +232,9 @@ onUnmounted(() => {
   position: relative;
   z-index: 2;
   min-width: 0;
-  width: calc(100vw - 250px);
+  width: calc(100vw - 40px);
   min-height: 100vh;
-  margin-left: 250px;
+  margin-left: 40px;
   padding: 32px 40px;
   box-sizing: border-box;
 }
@@ -361,36 +270,20 @@ onUnmounted(() => {
 
 .llave-tablero {
   display: flex;
-  align-items: flex-start; /* Alinea las columnas arriba de todo */
-  gap: 32px;
+  align-items: flex-start;
+  gap: 8px;
   width: max-content;
-  min-width: 1800px;
   padding: 20px 0;
 }
 
-/* 🧪 COLUMNAS OSCURAS SÚPER NÍTIDAS (Sin blur pero con cuerpo) */
-:deep(.ronda-container),
-:deep(section > div),
-:deep(.llave-tablero > *) {
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: flex-start !important; 
-  align-items: center !important;
-  
-  /* 🎯 Bloque oscuro con buena opacidad para tapar el ruido visual del fondo */
-  background: rgba(20, 20, 20, 0.75) !important;
-  
-  /* Totalmente cristalino, sin empañar la imagen */
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-
-  /* Resaltamos el borde con tu variable dinámica */
-  border: 2px solid var(--borde-llave) !important;
+:deep(.ronda-llave) {
+  background: rgba(20, 20, 20, 0.75);
+  border: 2px solid var(--borde-llave);
   border-radius: 14px;
   padding: 20px;
   margin-top: 10px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
-  transition: background 0.8s ease, border-color 0.8s ease !important;
+  transition: background 0.8s ease, border-color 0.8s ease;
 }
 
 .barra-horizontal {
@@ -401,14 +294,13 @@ onUnmounted(() => {
   height: 12px;
   overflow-x: auto;
   overflow-y: hidden;
-  background-color: rgba(0,0,0,0.3);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .barra-contenido {
   height: 1px;
 }
 
-/* 🧪 SECCIÓN DEL CAMPEÓN FLOTANTE Y TRANSPARENTE */
 .campeon-container {
   display: flex;
   justify-content: center;
@@ -426,7 +318,6 @@ onUnmounted(() => {
 }
 
 .card-premium-vidrio {
-  /* Fondo oscuro uniforme en sintonía con las columnas de arriba */
   background: rgba(20, 20, 20, 0.8) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -444,13 +335,12 @@ onUnmounted(() => {
   transition: border-color 0.8s ease, background 0.8s ease !important;
 }
 
-/* 🏆 CONTENEDOR AJUSTADO PARA TU LOGO.PNG */
 .trofeo-real-wrapper {
   position: absolute;
-  top: -75px; 
+  top: -75px;
   left: 50%;
   transform: translateX(-50%);
-  width: 100px; 
+  width: 100px;
   height: 130px;
   pointer-events: none;
 }
@@ -470,7 +360,7 @@ onUnmounted(() => {
 }
 
 .campeon-card h2 {
-  margin: 40px 0 20px 0; /* Espacio superior para que el logo no tape las letras */
+  margin: 40px 0 20px 0;
   font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -480,7 +370,7 @@ onUnmounted(() => {
 .bandera-wrapper {
   display: inline-block;
   padding: 6px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   margin-bottom: 15px;
 }

@@ -1,8 +1,13 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { resultadosRealesAPI } from '@/services/resultadosRealesAPI'
+import { resultadosLlaveRealesAPI } from '@/services/resultadosLlaveRealesAPI'
+import { prediccionesLlaveAPI } from '@/services/prediccionesLlaveAPI'
 import { useDatosProdeStore } from '@/stores/storeDataProde'
 import { usePrediccionesStore } from '@/stores/storePredicciones'
+import { calcularPuntosPartidoLlave } from '@/utils/puntosUtils'
+
+const USUARIO_ID = 'usuario1'
 
 const GRUPOS = [
   'A',
@@ -23,8 +28,14 @@ export const useResultadosRealesStore = defineStore(
   'resultadosReales',
   () => {
     const resultados = ref([])
+    const resultadosLlave = ref([])
+    const prediccionesLlave = ref({})
+
     const cargando = ref(false)
+    const cargandoPuntajeLlave = ref(false)
+
     const error = ref(null)
+    const errorPuntajeLlave = ref(null)
 
     const dataProdeStore =
       useDatosProdeStore()
@@ -46,31 +57,101 @@ export const useResultadosRealesStore = defineStore(
       */
       await dataProdeStore.inicializar()
 
-      if (resultados.value.length > 0) {
+      if (resultados.value.length === 0) {
+        cargando.value = true
+        error.value = null
+
+        try {
+          const datos =
+            await resultadosRealesAPI.obtenerResultados()
+
+          resultados.value = Array.isArray(datos)
+            ? datos
+            : []
+        } catch (err) {
+          console.error(
+            'Error al cargar resultados reales:',
+            err
+          )
+
+          error.value = err.message
+          resultados.value = []
+        } finally {
+          cargando.value = false
+        }
+      }
+
+      await inicializarPuntajeLlave()
+    }
+
+    const inicializarPuntajeLlave =
+      async () => {
+        if (
+          resultadosLlave.value.length > 0
+        ) {
+          return
+        }
+
+        cargandoPuntajeLlave.value = true
+        errorPuntajeLlave.value = null
+
+        try {
+          const [
+            resultadosRealesLlave,
+            prediccionesUsuario
+          ] = await Promise.all([
+            resultadosLlaveRealesAPI
+              .obtenerResultados(),
+
+            prediccionesLlaveAPI
+              .obtenerPorUsuario(
+                USUARIO_ID
+              )
+          ])
+
+          resultadosLlave.value =
+            resultadosRealesLlave
+
+          prediccionesLlave.value = {}
+
+          prediccionesUsuario.forEach(
+            (prediccion) => {
+              prediccionesLlave.value[
+                prediccion.partidoId
+              ] = prediccion
+            }
+          )
+        } catch (err) {
+          console.error(
+            'Error al cargar el puntaje de la llave:',
+            err
+          )
+
+          errorPuntajeLlave.value =
+            err.message
+        } finally {
+          cargandoPuntajeLlave.value = false
+        }
+      }
+
+    const registrarPrediccionLlave = (
+      prediccion
+    ) => {
+      if (!prediccion?.partidoId) {
         return
       }
 
-      cargando.value = true
-      error.value = null
+      prediccionesLlave.value[
+        prediccion.partidoId
+      ] = prediccion
+    }
 
-      try {
-        const datos =
-          await resultadosRealesAPI.obtenerResultados()
-
-        resultados.value = Array.isArray(datos)
-          ? datos
-          : []
-      } catch (err) {
-        console.error(
-          'Error al cargar resultados reales:',
-          err
-        )
-
-        error.value = err.message
-        resultados.value = []
-      } finally {
-        cargando.value = false
-      }
+    const quitarPrediccionLlave = (
+      partidoId
+    ) => {
+      delete prediccionesLlave.value[
+        partidoId
+      ]
     }
 
     /*
@@ -310,7 +391,7 @@ export const useResultadosRealesStore = defineStore(
       del usuario comparando sus predicciones
       con los resultados reales.
     */
-    const puntajeTotalUsuario =
+    const puntajeFaseGrupos =
       computed(() => {
         let puntosAcumulados = 0
 
@@ -343,17 +424,72 @@ export const useResultadosRealesStore = defineStore(
         return puntosAcumulados
       })
 
+    /*
+      Calcula los puntos de la fase
+      eliminatoria.
+
+      - Marcador exacto y ganador: 6.
+      - Ganador correcto: 3.
+      - Ganador incorrecto: 0.
+
+      Si el partido se define por penales,
+      solo importa acertar el equipo que
+      clasifica. El marcador exacto de la
+      tanda no se compara.
+    */
+    const puntajeLlaveEliminacion =
+      computed(() => {
+        return resultadosLlave.value.reduce(
+          (puntosAcumulados, resultadoReal) => {
+            const prediccion =
+              prediccionesLlave.value[
+                resultadoReal.partidoId
+              ]
+
+            return (
+              puntosAcumulados +
+              calcularPuntosPartidoLlave(
+                prediccion,
+                resultadoReal
+              )
+            )
+          },
+          0
+        )
+      })
+
+    const puntajeTotalUsuario =
+      computed(() => {
+        return (
+          puntajeFaseGrupos.value +
+          puntajeLlaveEliminacion.value
+        )
+      })
+
     return {
       resultados,
+      resultadosLlave,
+      prediccionesLlave,
+
       cargando,
+      cargandoPuntajeLlave,
+
       error,
+      errorPuntajeLlave,
 
       inicializar,
+      inicializarPuntajeLlave,
+      registrarPrediccionLlave,
+      quitarPrediccionLlave,
+
       calcularTablaGrupo,
       obtenerTablasReales,
       obtenerClasificados,
       gruposCompletos,
       compararEquipos,
+
+      puntajeFaseGrupos,
+      puntajeLlaveEliminacion,
       puntajeTotalUsuario
     }
   }

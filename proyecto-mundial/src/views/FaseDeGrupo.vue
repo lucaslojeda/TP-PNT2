@@ -69,13 +69,15 @@ onMounted(() => {
   background-color: grey;
   min-height: 100vh;
   width: 100vw;
+  background: '/imagenes/logo2026.png';
 }
 
 .fase-grupos-content {
+  background-image: '/imagenes/logo2026.png';
   margin-left: 250px;
   min-height: 100vh;
   width: calc(100vw - 250px);
-  background-color: grey;
+  background-color: transparent;
   padding: 32px 40px;
   box-sizing: border-box;
 }
@@ -147,4 +149,6 @@ onMounted(() => {
     padding: 20px;
   }
 }
+
+
 </style>

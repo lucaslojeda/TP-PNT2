@@ -59,6 +59,12 @@
           <h3>Puntos Acumulados</h3>
           <p class="puntos-valor">{{ resultadosStore.puntajeTotalUsuario }}</p>
           <p class="puntos-label">Puntos en total</p>
+          <p class="puntos-desglose">
+            Fase de grupos:
+            {{ resultadosStore.puntajeFaseGrupos }}
+            · Llave:
+            {{ resultadosStore.puntajeLlaveEliminacion }}
+          </p>
         </div>
         <div class="puntos-info">
           <p>Ganas puntos cuando aciertas en tus predicciones del Prode. ¡Sigue apostando para acumular más puntos!</p>
@@ -362,6 +368,12 @@ h1 {
   font-size: 14px;
   color: #aaa;
   margin: 0;
+}
+
+.puntos-desglose {
+  margin: 0;
+  color: #ccc;
+  font-size: 14px;
 }
 
 .puntos-info {

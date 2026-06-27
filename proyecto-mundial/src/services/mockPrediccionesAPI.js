@@ -1,107 +1,305 @@
 // MOCK API para predicciones
 // Guarda las predicciones en MockAPI
 
-const API_URL = 'https://6a29a9d0f59cb8f65f1d75f5.mockapi.io/predicciones'
+import {
+  validarPrediccionGrupo,
+  validarPrediccionesGrupo
+} from '@/utils/validacionesDatos'
+
+const API_URL =
+  'https://6a29a9d0f59cb8f65f1d75f5.mockapi.io/predicciones'
+
+/*
+  En esta colección MockAPI utiliza
+  "usuarioId" como identificador del registro.
+  Dejamos también "id" como alternativa por si
+  la configuración cambia en el futuro.
+*/
+const obtenerIdRegistro = (prediccion) => {
+  return prediccion.usuarioId ?? prediccion.id
+}
+
+const obtenerValorFecha = (prediccion) => {
+  const fecha = Date.parse(
+    prediccion.fechaGuardado
+  )
+
+  if (!Number.isNaN(fecha)) {
+    return fecha
+  }
+
+  return Number(
+    obtenerIdRegistro(prediccion)
+  ) || 0
+}
+
+const obtenerTodas = async () => {
+  const response = await fetch(API_URL)
+
+  if (!response.ok) {
+    throw new Error(
+      `Error al obtener predicciones. Código: ${response.status}`
+    )
+  }
+
+  const datos = await response.json()
+
+  return validarPrediccionesGrupo(
+    datos
+  )
+}
+
+const eliminarRegistro = async (
+  prediccion
+) => {
+  const registroId =
+    obtenerIdRegistro(prediccion)
+
+  if (!registroId) {
+    throw new Error(
+      'La predicción no tiene un identificador válido.'
+    )
+  }
+
+  const response = await fetch(
+    `${API_URL}/${registroId}`,
+    {
+      method: 'DELETE'
+    }
+  )
+
+  if (!response.ok) {
+    throw new Error(
+      `Error al eliminar la predicción. Código: ${response.status}`
+    )
+  }
+}
 
 export const mockPrediccionesAPI = {
-  // Obtener todas las predicciones del usuario
-  obtenerPredicciones: async () => {
-    const response = await fetch(API_URL)
-
-    if (!response.ok) {
-      throw new Error('Error al obtener predicciones')
-    }
-
-    const predicciones = await response.json()
+  /*
+    Devuelve una sola predicción por partido
+    y usuario. Si existen datos antiguos
+    duplicados, conserva el más reciente.
+  */
+  obtenerPredicciones: async (
+    userId
+  ) => {
+    const predicciones =
+      await obtenerTodas()
 
     const prediccionesPorPartido = {}
 
-    predicciones.forEach((prediccion) => {
-      prediccionesPorPartido[prediccion.partidoId] = prediccion
-    })
+    predicciones
+      .filter((prediccion) => {
+        return prediccion.userId === userId
+      })
+      .forEach((prediccion) => {
+        const prediccionActual =
+          prediccionesPorPartido[
+            prediccion.partidoId
+          ]
+
+        if (
+          !prediccionActual ||
+          obtenerValorFecha(prediccion) >
+            obtenerValorFecha(
+              prediccionActual
+            )
+        ) {
+          prediccionesPorPartido[
+            prediccion.partidoId
+          ] = prediccion
+        }
+      })
 
     return prediccionesPorPartido
   },
 
-  // Guardar una predicción
-  guardarPrediccion: async (prediccion) => {
-    const predicciones = await mockPrediccionesAPI.obtenerPredicciones()
-    const prediccionExistente = predicciones[prediccion.partidoId]
+  buscarPrediccion: async (
+    userId,
+    partidoId
+  ) => {
+    const predicciones =
+      await mockPrediccionesAPI
+        .obtenerPredicciones(userId)
+
+    return (
+      predicciones[partidoId] ||
+      null
+    )
+  },
+
+  /*
+    Crea o actualiza según la combinación
+    userId + partidoId.
+  */
+  guardarPrediccion: async (
+    prediccion
+  ) => {
+    validarPrediccionGrupo(
+      prediccion,
+      'prediccionParaGuardar'
+    )
+
+    const prediccionExistente =
+      await mockPrediccionesAPI
+        .buscarPrediccion(
+          prediccion.userId,
+          prediccion.partidoId
+        )
 
     const prediccionConFecha = {
       ...prediccion,
-      fechaGuardado: new Date().toISOString()
+      fechaGuardado:
+        new Date().toISOString()
     }
 
-    // Si ya existe una predicción para ese partido, la actualizamos
-    if (prediccionExistente?.id) {
-      return await mockPrediccionesAPI.actualizarPrediccion(
-        prediccionExistente.id,
-        prediccionConFecha
+    if (prediccionExistente) {
+      const registroId =
+        obtenerIdRegistro(
+          prediccionExistente
+        )
+
+      return await mockPrediccionesAPI
+        .actualizarPrediccion(
+          registroId,
+          prediccionConFecha
+        )
+    }
+
+    const response = await fetch(
+      API_URL,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type':
+            'application/json'
+        },
+        body: JSON.stringify(
+          prediccionConFecha
+        )
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(
+        `Error al guardar la predicción. Código: ${response.status}`
       )
     }
 
-    // Si no existe, creamos una nueva
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(prediccionConFecha)
-    })
+    const prediccionGuardada =
+      await response.json()
 
-    if (!response.ok) {
-      throw new Error('Error al guardar predicción')
-    }
-
-    return await response.json()
+    return validarPrediccionGrupo(
+      prediccionGuardada,
+      'respuestaPrediccionGuardada',
+      true
+    )
   },
 
-  // Actualizar una predicción existente
-  actualizarPrediccion: async (id, prediccion) => {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(prediccion)
-    })
-
-    if (!response.ok) {
-      throw new Error('Error al actualizar predicción')
+  actualizarPrediccion: async (
+    registroId,
+    prediccion
+  ) => {
+    if (!registroId) {
+      throw new Error(
+        'No se encontró el identificador de la predicción.'
+      )
     }
 
-    return await response.json()
+    const prediccionConFecha = {
+      ...prediccion,
+      fechaGuardado:
+        new Date().toISOString()
+    }
+
+    validarPrediccionGrupo(
+      prediccionConFecha,
+      'prediccionParaActualizar'
+    )
+
+    const response = await fetch(
+      `${API_URL}/${registroId}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type':
+            'application/json'
+        },
+        body: JSON.stringify(
+          prediccionConFecha
+        )
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(
+        `Error al actualizar la predicción. Código: ${response.status}`
+      )
+    }
+
+    const prediccionActualizada =
+      await response.json()
+
+    return validarPrediccionGrupo(
+      prediccionActualizada,
+      'respuestaPrediccionActualizada',
+      true
+    )
   },
 
-  // Eliminar una predicción
-  eliminarPrediccion: async (partidoId) => {
-    const predicciones = await mockPrediccionesAPI.obtenerPredicciones()
-    const prediccionExistente = predicciones[partidoId]
+  /*
+    Elimina todos los registros del usuario
+    para ese partido. Esto también corrige
+    posibles duplicados antiguos.
+  */
+  eliminarPrediccion: async (
+    userId,
+    partidoId
+  ) => {
+    const predicciones =
+      await obtenerTodas()
 
-    if (!prediccionExistente?.id) {
-      return
-    }
+    const coincidencias =
+      predicciones.filter(
+        (prediccion) => {
+          return (
+            prediccion.userId === userId &&
+            prediccion.partidoId ===
+              partidoId
+          )
+        }
+      )
 
-    const response = await fetch(`${API_URL}/${prediccionExistente.id}`, {
-      method: 'DELETE'
-    })
-
-    if (!response.ok) {
-      throw new Error('Error al eliminar predicción')
+    for (
+      const prediccion of coincidencias
+    ) {
+      await eliminarRegistro(prediccion)
     }
   },
 
-  // Limpiar todas las predicciones
-  limpiarTodas: async () => {
-    const response = await fetch(API_URL)
+  /*
+    Limpia únicamente las predicciones
+    pertenecientes al usuario indicado.
+  */
+  limpiarTodas: async (userId) => {
+    const predicciones =
+      await obtenerTodas()
 
-    if (!response.ok) {
-      throw new Error('Error al obtener predicciones')
-    }
+    const prediccionesDelUsuario =
+      predicciones.filter(
+        (prediccion) => {
+          return (
+            prediccion.userId === userId
+          )
+        }
+      )
 
-    const predicciones = await response.json()
-
-    for (const prediccion of predicciones) {
-      await fetch(`${API_URL}/${prediccion.id}`, {
-        method: 'DELETE'
-      })
+    for (
+      const prediccion
+      of prediccionesDelUsuario
+    ) {
+      await eliminarRegistro(prediccion)
     }
   }
 }

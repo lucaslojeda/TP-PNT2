@@ -2,6 +2,13 @@
   <div class="predicciones-section">
     <h2>Mis Predicciones</h2>
 
+    <p
+      v-if="mensajeError"
+      class="mensaje-error"
+    >
+      {{ mensajeError }}
+    </p>
+
     <div v-if="cargando" class="cargando">
       Cargando predicciones...
     </div>
@@ -79,6 +86,11 @@
               type="number"
               min="0"
               class="goles-input"
+              :disabled="
+                operacionEnCurso[
+                  prediccion.partidoId
+                ]
+              "
             />
 
             <span>-</span>
@@ -90,6 +102,11 @@
               type="number"
               min="0"
               class="goles-input"
+              :disabled="
+                operacionEnCurso[
+                  prediccion.partidoId
+                ]
+              "
             />
           </div>
 
@@ -114,6 +131,11 @@
           <button
             v-if="!editando[prediccion.partidoId]"
             class="btn-editar-prediccion"
+            :disabled="
+              operacionEnCurso[
+                prediccion.partidoId
+              ]
+            "
             @click="iniciarEdicion(prediccion)"
           >
             Editar
@@ -122,13 +144,29 @@
           <div v-else class="btn-grupo">
             <button
               class="btn-guardar"
+              :disabled="
+                operacionEnCurso[
+                  prediccion.partidoId
+                ]
+              "
               @click="guardarEdicion(prediccion)"
             >
-              ✓ Guardar
+              {{
+                operacionEnCurso[
+                  prediccion.partidoId
+                ]
+                  ? 'Guardando...'
+                  : '✓ Guardar'
+              }}
             </button>
 
             <button
               class="btn-cancelar"
+              :disabled="
+                operacionEnCurso[
+                  prediccion.partidoId
+                ]
+              "
               @click="
                 cancelarEdicion(prediccion.partidoId)
               "
@@ -139,11 +177,22 @@
 
           <button
             class="btn-eliminar"
+            :disabled="
+              operacionEnCurso[
+                prediccion.partidoId
+              ]
+            "
             @click="
               eliminarPrediccion(prediccion.partidoId)
             "
           >
-            Eliminar
+            {{
+              operacionEnCurso[
+                prediccion.partidoId
+              ]
+                ? 'Procesando...'
+                : 'Eliminar'
+            }}
           </button>
         </div>
       </div>
@@ -167,8 +216,10 @@ const prediccionesStore = usePrediccionesStore()
 const editando = ref({})
 const golesEditLocal = ref({})
 const golesEditVisitante = ref({})
+const operacionEnCurso = ref({})
 
 const cargando = ref(false)
+const mensajeError = ref('')
 
 const predicciones = computed(() => {
   return [
@@ -191,11 +242,20 @@ const cargarDatos = async () => {
   try {
     await dataProdeStore.inicializar()
     await prediccionesStore.cargarPredicciones()
+
+    if (prediccionesStore.error) {
+      mensajeError.value =
+        prediccionesStore.error
+    }
   } catch (error) {
     console.error(
       'Error al cargar las predicciones:',
       error
     )
+
+    mensajeError.value =
+      error.message ||
+      'No se pudieron cargar las predicciones.'
   } finally {
     cargando.value = false
   }
@@ -216,6 +276,8 @@ const formatearFecha = (fecha) => {
 }
 
 const iniciarEdicion = (prediccion) => {
+  mensajeError.value = ''
+
   editando.value[prediccion.partidoId] = true
 
   golesEditLocal.value[prediccion.partidoId] =
@@ -236,16 +298,36 @@ const guardarEdicion = async (prediccion) => {
     hora: prediccion.hora
   }
 
-  await prediccionesStore.actualizarPrediccion(
-    partido,
-    golesEditLocal.value[prediccion.partidoId],
-    golesEditVisitante.value[prediccion.partidoId]
-  )
+  operacionEnCurso.value[
+    prediccion.partidoId
+  ] = true
 
-  editando.value[prediccion.partidoId] = false
+  mensajeError.value = ''
+
+  try {
+    await prediccionesStore.actualizarPrediccion(
+      partido,
+      golesEditLocal.value[prediccion.partidoId],
+      golesEditVisitante.value[prediccion.partidoId]
+    )
+
+    editando.value[
+      prediccion.partidoId
+    ] = false
+  } catch (error) {
+    mensajeError.value =
+      error.message ||
+      'No se pudo actualizar la predicción.'
+  } finally {
+    operacionEnCurso.value[
+      prediccion.partidoId
+    ] = false
+  }
 }
 
 const cancelarEdicion = (partidoId) => {
+  mensajeError.value = ''
+
   editando.value[partidoId] = false
 
   delete golesEditLocal.value[partidoId]
@@ -261,9 +343,20 @@ const eliminarPrediccion = async (partidoId) => {
     return
   }
 
-  await prediccionesStore.reiniciarPrediccion(
-    partidoId
-  )
+  operacionEnCurso.value[partidoId] = true
+  mensajeError.value = ''
+
+  try {
+    await prediccionesStore.reiniciarPrediccion(
+      partidoId
+    )
+  } catch (error) {
+    mensajeError.value =
+      error.message ||
+      'No se pudo eliminar la predicción.'
+  } finally {
+    operacionEnCurso.value[partidoId] = false
+  }
 }
 </script>
 
@@ -291,6 +384,17 @@ const eliminarPrediccion = async (partidoId) => {
   color: #aaa;
   padding: 40px 20px;
   font-size: 16px;
+}
+
+.mensaje-error {
+  margin: -15px 0 20px;
+  padding: 12px;
+  border: 1px solid #7a3030;
+  border-radius: 6px;
+  background-color: #431d1d;
+  color: #ffb3b3;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .sin-predicciones p {
@@ -438,6 +542,14 @@ const eliminarPrediccion = async (partidoId) => {
 .btn-eliminar:hover {
   background-color: #ff6b6b;
   color: #1a1a1a;
+}
+
+.btn-editar-prediccion:disabled,
+.btn-eliminar:disabled,
+.btn-guardar:disabled,
+.btn-cancelar:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .btn-grupo {
