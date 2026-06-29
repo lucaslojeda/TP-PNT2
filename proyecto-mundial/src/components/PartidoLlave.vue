@@ -376,10 +376,23 @@ const limpiarPenalesEquipo2 = () => {
   display: flex;
   flex-direction: column;
   width: 280px;
-  background: #1f1f1f;
-  border: 1px solid #3b3b3b;
-  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(38, 38, 38, 0.98), rgba(18, 18, 18, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.partido-llave:hover {
+  border-color: rgba(0, 210, 106, 0.55);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(0, 210, 106, 0.12);
+  transform: translateY(-1px);
 }
 
 .partido-contenido {
@@ -401,10 +414,11 @@ const limpiarPenalesEquipo2 = () => {
   padding: 8px 10px;
   box-sizing: border-box;
   color: white;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .equipo:first-child {
-  border-bottom: 1px solid #3b3b3b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .equipo-info {
@@ -419,8 +433,9 @@ const limpiarPenalesEquipo2 = () => {
   height: 19px;
   flex-shrink: 0;
   object-fit: cover;
-  border: 1px solid #555;
-  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
 .nombre-equipo {
@@ -435,13 +450,20 @@ const limpiarPenalesEquipo2 = () => {
   width: 38px;
   height: 28px;
   box-sizing: border-box;
-  border: 1px solid #555;
-  border-radius: 5px;
-  background: #2c2c2c;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #111;
   color: white;
   text-align: center;
   font-weight: 700;
   font-size: 0.9rem;
+}
+
+.input-goles:focus,
+.input-penales:focus {
+  outline: none;
+  border-color: #00d26a;
+  box-shadow: 0 0 0 2px rgba(0, 210, 106, 0.18);
 }
 
 .input-goles:disabled {
@@ -457,8 +479,8 @@ const limpiarPenalesEquipo2 = () => {
   align-items: center;
   gap: 2px;
   padding: 4px 4px;
-  border-left: 1px solid #4a4a4a;
-  background: #272727;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
   color: white;
 }
 
@@ -472,9 +494,9 @@ const limpiarPenalesEquipo2 = () => {
   width: 36px;
   height: 28px;
   box-sizing: border-box;
-  border: 1px solid #555;
-  border-radius: 5px;
-  background: #2c2c2c;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #111;
   color: white;
   text-align: center;
   font-weight: 700;
@@ -486,8 +508,8 @@ const limpiarPenalesEquipo2 = () => {
 }
 
 .ganador {
-  background-color: #143d25;
-  color: #64f092;
+  background: linear-gradient(90deg, rgba(0, 210, 106, 0.22), rgba(0, 210, 106, 0.05));
+  color: #7dffad;
 }
 
 /* Botones dentro del partido, ocultos hasta hover */
@@ -522,8 +544,16 @@ const limpiarPenalesEquipo2 = () => {
   opacity: 0.5;
 }
 
-.guardar { background: #1e88e5; color: white; }
+.guardar { background: #00a862; color: #06140d; }
 .reiniciar { background: #d84343; color: white; }
+
+.guardar:not(:disabled):hover {
+  background: #00d26a;
+}
+
+.reiniciar:not(:disabled):hover {
+  background: #ef5350;
+}
 
 .mensaje-error {
   padding: 4px 10px;

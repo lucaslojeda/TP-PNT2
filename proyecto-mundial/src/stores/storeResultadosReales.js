@@ -5,9 +5,8 @@ import { resultadosLlaveRealesAPI } from '@/services/resultadosLlaveRealesAPI'
 import { prediccionesLlaveAPI } from '@/services/prediccionesLlaveAPI'
 import { useDatosProdeStore } from '@/stores/storeDataProde'
 import { usePrediccionesStore } from '@/stores/storePredicciones'
+import { useStoreUsuario } from '@/stores/storeUsuario'
 import { calcularPuntosPartidoLlave } from '@/utils/puntosUtils'
-
-const USUARIO_ID = 'usuario1'
 
 const GRUPOS = [
   'A',
@@ -42,6 +41,12 @@ export const useResultadosRealesStore = defineStore(
 
     const prediccionesStore =
       usePrediccionesStore()
+
+    const storeUsuario =
+      useStoreUsuario()
+
+    const usuarioPuntajeLlaveCargado =
+      ref('')
 
     /*
       Trae primero los países y partidos
@@ -86,8 +91,13 @@ export const useResultadosRealesStore = defineStore(
 
     const inicializarPuntajeLlave =
       async () => {
+        const usuarioActivoId =
+          storeUsuario.usuarioActualId || 'usuario1'
+
         if (
-          resultadosLlave.value.length > 0
+          resultadosLlave.value.length > 0 &&
+          usuarioPuntajeLlaveCargado.value ===
+            usuarioActivoId
         ) {
           return
         }
@@ -105,7 +115,7 @@ export const useResultadosRealesStore = defineStore(
 
             prediccionesLlaveAPI
               .obtenerPorUsuario(
-                USUARIO_ID
+                usuarioActivoId
               )
           ])
 
@@ -121,6 +131,9 @@ export const useResultadosRealesStore = defineStore(
               ] = prediccion
             }
           )
+
+          usuarioPuntajeLlaveCargado.value =
+            usuarioActivoId
         } catch (err) {
           console.error(
             'Error al cargar el puntaje de la llave:',

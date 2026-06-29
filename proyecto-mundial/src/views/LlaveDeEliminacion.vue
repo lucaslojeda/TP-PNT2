@@ -262,6 +262,8 @@ onUnmounted(() => {
   overflow-y: visible;
   box-sizing: border-box;
   scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 24px;
 }
 
 .llave-scroll::-webkit-scrollbar {
@@ -271,19 +273,20 @@ onUnmounted(() => {
 .llave-tablero {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 4px;
   width: max-content;
-  padding: 20px 0;
+  padding: 16px 12px 28px;
 }
 
 :deep(.ronda-llave) {
   background: rgba(20, 20, 20, 0.75);
   border: 2px solid var(--borde-llave);
   border-radius: 14px;
-  padding: 20px;
+  padding: 16px;
   margin-top: 10px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
   transition: background 0.8s ease, border-color 0.8s ease;
+  scroll-snap-align: start;
 }
 
 .barra-horizontal {
@@ -389,5 +392,17 @@ onUnmounted(() => {
   font-weight: 900;
   letter-spacing: 1px;
   text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 900px) {
+  .llave-content {
+    width: 100%;
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .llave-header {
+    max-width: none;
+  }
 }
 </style>

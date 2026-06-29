@@ -87,12 +87,14 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Sidebar from '@/components/Sidebar.vue';
 import PrediccionesGuardadas from '@/components/PrediccionesGuardadas.vue';
+import { useStoreUsuario } from '@/stores/storeUsuario';
 
 // 1. Importamos los stores necesarios para calcular tus puntos en vivo
 import { useResultadosRealesStore } from '@/stores/storeResultadosReales';
 import { usePrediccionesStore } from '@/stores/storePredicciones';
 
 const router = useRouter();
+const storeUsuario = useStoreUsuario();
 
 // 2. Instanciamos ambos stores
 const resultadosStore = useResultadosRealesStore();
@@ -124,7 +126,7 @@ onMounted(async () => {
 
 // Guardar datos estéticos en localStorage
 function guardarDatos() {
-  localStorage.setItem('usuarioProde', JSON.stringify(usuarioData.value));
+  storeUsuario.actualizarPerfilActual(usuarioData.value);
 }
 
 // Editar nombre
@@ -157,7 +159,7 @@ function actualizarFoto(event) {
 
 // Desloguear
 function desloguearse() {
-  localStorage.removeItem('usuarioProde');
+  storeUsuario.cerrarSesion();
   router.push('/');
 }
 </script>

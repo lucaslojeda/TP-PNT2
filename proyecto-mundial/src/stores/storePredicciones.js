@@ -1,13 +1,17 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { mockPrediccionesAPI } from '@/services/mockPrediccionesAPI'
-
-const USUARIO_ID = 'usuario1'
+import { useStoreUsuario } from '@/stores/storeUsuario'
 
 export const usePrediccionesStore = defineStore('predicciones', () => {
   const predicciones = ref({})
   const cargando = ref(false)
   const error = ref(null)
+  const storeUsuario = useStoreUsuario()
+
+  const obtenerUsuarioActivoId = () => {
+    return storeUsuario.usuarioActualId || 'usuario1'
+  }
 
   const cargarPredicciones = async () => {
     cargando.value = true
@@ -17,7 +21,7 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
       const datos =
         await mockPrediccionesAPI
           .obtenerPredicciones(
-            USUARIO_ID
+            obtenerUsuarioActivoId()
           )
 
       predicciones.value = {}
@@ -39,7 +43,7 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
 
   const guardarPrediccion = async (partido, golesLocal, golesVisitante) => {
     const prediccion = {
-      userId: USUARIO_ID,
+      userId: obtenerUsuarioActivoId(),
       partidoId: partido.id,
       local: partido.local,
       visitante: partido.visitante,
@@ -68,7 +72,7 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
 
   const actualizarPrediccion = async (partido, golesLocal, golesVisitante) => {
     const prediccion = {
-      userId: USUARIO_ID,
+      userId: obtenerUsuarioActivoId(),
       partidoId: partido.id,
       local: partido.local,
       visitante: partido.visitante,
@@ -106,7 +110,7 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
     try {
       await mockPrediccionesAPI
         .eliminarPrediccion(
-          USUARIO_ID,
+          obtenerUsuarioActivoId(),
           partidoId
         )
 
@@ -133,7 +137,7 @@ export const usePrediccionesStore = defineStore('predicciones', () => {
 
     try {
       await mockPrediccionesAPI
-        .limpiarTodas(USUARIO_ID)
+        .limpiarTodas(obtenerUsuarioActivoId())
 
       predicciones.value = {}
 

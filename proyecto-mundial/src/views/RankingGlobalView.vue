@@ -26,7 +26,7 @@
             <tr 
               v-for="(competidor, index) in rankingStore.rankingOrdenado" 
               :key="competidor.id"
-              :class="{ 'mi-fila': competidor.id === 'actual_user_id' }"
+              :class="{ 'mi-fila': competidor.esUsuarioActivo }"
             >
               <td class="text-center posicion-col">
                 <span v-if="index === 0" class="badge oro">🥇 1</span>
@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 
 // 1. Importamos los stores necesarios para armar el cruce del ranking
@@ -67,17 +67,8 @@ const rankingStore = useStoreRanking()
 const resultadosStore = useResultadosRealesStore()
 const prediccionesStore = usePrediccionesStore()
 
-// Variable reactiva para el nombre del usuario logueado
-const nombreUsuarioLocal = ref('')
-
 // 3. Unificamos todo el ciclo de vida en un único onMounted
 onMounted(async () => {
-  // Levantamos los datos de la sesión del localStorage al arrancar
-  const datosSesion = localStorage.getItem('usuarioProde')
-  if (datosSesion) {
-    nombreUsuarioLocal.value = JSON.parse(datosSesion).nombre
-  }
-  
   // Cargamos secuencialmente los datos de las APIs de manera segura
   await prediccionesStore.cargarPredicciones()
   await resultadosStore.inicializar()

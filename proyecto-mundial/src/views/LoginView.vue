@@ -30,7 +30,7 @@ function iniciarSesion() {
 
   if (ingresoExitoso) {
     isError.value = false;
-    router.push('/home');
+    router.push(router.currentRoute.value.query.redirect || '/home');
   } else {
     isError.value = true;
   }
