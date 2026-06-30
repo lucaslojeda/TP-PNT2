@@ -2,6 +2,7 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import { useResultadosRealesStore } from '@/stores/storeResultadosReales'
+import { useStoreUsuario } from '@/stores/storeUsuario'
 import { prediccionesLlaveAPI } from '@/services/prediccionesLlaveAPI'
 
 import {
@@ -13,12 +14,13 @@ import {
   limpiarPrediccionPartido
 } from '@/utils/llaveUtils'
 
-const USUARIO_ID = 'usuario1'
-
 export const useLlaveEliminacionStore =
   defineStore('llaveEliminacion', () => {
     const resultadosRealesStore =
       useResultadosRealesStore()
+
+    const storeUsuario =
+      useStoreUsuario()
 
     const partidosDieciseisavos = ref([])
     const partidosOctavos = ref([])
@@ -28,6 +30,10 @@ export const useLlaveEliminacionStore =
 
     const cargando = ref(false)
     const error = ref(null)
+
+    const obtenerUsuarioActivoId = () => {
+      return storeUsuario.usuarioActualId || 'usuario1'
+    }
 
     const asignarRondas = (rondas) => {
       partidosDieciseisavos.value =
@@ -178,7 +184,7 @@ export const useLlaveEliminacionStore =
           )
 
         const prediccion = {
-          userId: USUARIO_ID,
+          userId: obtenerUsuarioActivoId(),
           partidoId: partido.id,
           fase: partido.fase,
 
@@ -284,7 +290,7 @@ export const useLlaveEliminacionStore =
       ) {
         await prediccionesLlaveAPI
           .eliminarPrediccion(
-            USUARIO_ID,
+            obtenerUsuarioActivoId(),
             partidoSiguiente.id
           )
 
@@ -337,7 +343,7 @@ export const useLlaveEliminacionStore =
       try {
         await prediccionesLlaveAPI
           .eliminarPrediccion(
-            USUARIO_ID,
+            obtenerUsuarioActivoId(),
             partido.id
           )
 
@@ -432,7 +438,7 @@ export const useLlaveEliminacionStore =
         const predicciones =
           await prediccionesLlaveAPI
             .obtenerPorUsuario(
-              USUARIO_ID
+              obtenerUsuarioActivoId()
             )
 
         predicciones.sort(

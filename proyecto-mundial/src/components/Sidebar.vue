@@ -21,6 +21,7 @@ import logo from '@/assets/logo.png';
         <RouterLink to="/fase-grupos">Fase de grupos</RouterLink>
         <RouterLink to="/llave-eliminacion">Llave de eliminación directa</RouterLink>
         <RouterLink to="/ranking">Ranking global</RouterLink>
+        <RouterLink to="/estadisticas">Estadisticas</RouterLink>
         <RouterLink to="/perfil">Perfil</RouterLink>
     </nav>
 </aside>

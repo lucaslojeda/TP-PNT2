@@ -167,28 +167,9 @@ const totalPrediccionesGuardadas =
   })
 
 onMounted(async () => {
-  /*
-    Primero cargamos países y partidos
-    desde el nuevo Mockachino.
-  */
   await dataProdeStore.inicializar()
-
-  /*
-    Después cargamos las predicciones
-    guardadas del usuario.
-  */
-  await prediccionesStore
-    .cargarPredicciones()
-
-  /*
-    Cargamos los resultados reales para
-    calcular el puntaje.
-  */
+  await prediccionesStore.cargarPredicciones()
   await resultadosStore.inicializar()
-
-  /*
-    Finalmente cargamos el ranking.
-  */
   await rankingStore.cargarRanking()
 })
 </script>

@@ -110,10 +110,10 @@ const baseConfigBanderas = {
   'Irán': { bg: 'https://flagcdn.com/w1280/ir.png', tarjetaBg: 'rgba(28, 58, 39, 0.35)', borde: '#239e46', texto: '#da251d' }
 }
 
-const urlBanderaFondo = ref('/imagenes/logo2026.png')
 const colorTarjetaBg = ref('rgba(31, 31, 31, 0.9)')
 const colorBordeLlave = ref('rgba(255, 255, 255, 0.1)')
 const colorTextoRonda = ref('#00d26a')
+const urlBanderaFondo = ref('/imagenes/logo2026.png')
 
 const estilosDinamicos = computed(() => ({
   '--bg-bandera': urlBanderaFondo.value ? `url(${urlBanderaFondo.value})` : 'none',
@@ -131,7 +131,7 @@ watch(() => llaveStore.campeon, (nuevoCampeon) => {
 
     setTimeout(() => {
       const config = baseConfigBanderas[nuevoCampeon.nombre] || {
-        bg: '', tarjetaBg: 'rgba(31, 31, 31, 0.9)', borde: '#00d26a', texto: '#00d26a'
+        bg: '/imagenes/logo2026.png', tarjetaBg: 'rgba(31, 31, 31, 0.9)', borde: '#00d26a', texto: '#00d26a'
       }
       urlBanderaFondo.value = config.bg
       colorTarjetaBg.value = config.tarjetaBg
@@ -262,6 +262,8 @@ onUnmounted(() => {
   overflow-y: visible;
   box-sizing: border-box;
   scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 24px;
 }
 
 .llave-scroll::-webkit-scrollbar {
@@ -271,19 +273,20 @@ onUnmounted(() => {
 .llave-tablero {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 4px;
   width: max-content;
-  padding: 20px 0;
+  padding: 16px 12px 28px;
 }
 
 :deep(.ronda-llave) {
   background: rgba(20, 20, 20, 0.75);
   border: 2px solid var(--borde-llave);
   border-radius: 14px;
-  padding: 20px;
+  padding: 16px;
   margin-top: 10px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
   transition: background 0.8s ease, border-color 0.8s ease;
+  scroll-snap-align: start;
 }
 
 .barra-horizontal {
@@ -306,7 +309,7 @@ onUnmounted(() => {
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-top: 50px;
+  margin-top: 100px;
   animation: slideUp 0.6s ease-out forwards;
   position: relative;
   z-index: 15;
@@ -337,11 +340,11 @@ onUnmounted(() => {
 
 .trofeo-real-wrapper {
   position: absolute;
-  top: -75px;
+  top: -52px;
   left: 50%;
   transform: translateX(-50%);
-  width: 100px;
-  height: 130px;
+  width: 88px;
+  height: 116px;
   pointer-events: none;
 }
 
@@ -360,7 +363,7 @@ onUnmounted(() => {
 }
 
 .campeon-card h2 {
-  margin: 40px 0 20px 0;
+  margin: 58px 0 20px 0;
   font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -389,5 +392,17 @@ onUnmounted(() => {
   font-weight: 900;
   letter-spacing: 1px;
   text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 900px) {
+  .llave-content {
+    width: 100%;
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .llave-header {
+    max-width: none;
+  }
 }
 </style>

@@ -81,19 +81,22 @@ const alturaRonda = computed(() => {
 
 <style scoped>
 .ronda-llave {
-  width: 380px;
-  min-width: 380px;
+  width: 340px;
+  min-width: 340px;
   display: flex;
   flex-direction: column;
   overflow: visible;
 }
 
 .ronda-titulo {
-  height: 30px;
-  margin: 0 0 16px;
-  color: white;
-  font-size: 1.1rem;
+  min-height: 30px;
+  margin: 0 0 14px;
+  color: #f4f4f4;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-align: center;
+  text-transform: uppercase;
 }
 
 .ronda-partidos {
@@ -138,10 +141,11 @@ const alturaRonda = computed(() => {
   position: absolute;
   left: 280px;
   width: 40px;
-  border-top: 2px solid #b5b5b5;
-  border-right: 2px solid #b5b5b5;
-  border-bottom: 2px solid #b5b5b5;
+  border-top: 2px solid rgba(0, 210, 106, 0.45);
+  border-right: 2px solid rgba(0, 210, 106, 0.45);
+  border-bottom: 2px solid rgba(0, 210, 106, 0.45);
   box-sizing: border-box;
+  filter: drop-shadow(0 0 6px rgba(0, 210, 106, 0.22));
 }
 .lado-izquierdo .conector-pareja::after {
   content: '';
@@ -150,7 +154,7 @@ const alturaRonda = computed(() => {
   left: 100%;
   width: 60px;
   height: 2px;
-  background: #b5b5b5;
+  background: linear-gradient(90deg, rgba(0, 210, 106, 0.8), rgba(0, 210, 106, 0.15));
   transform: translateY(-1px);
 }
 
@@ -159,10 +163,11 @@ const alturaRonda = computed(() => {
   position: absolute;
   right: 280px;
   width: 40px;
-  border-top: 2px solid #b5b5b5;
-  border-left: 2px solid #b5b5b5;
-  border-bottom: 2px solid #b5b5b5;
+  border-top: 2px solid rgba(0, 210, 106, 0.45);
+  border-left: 2px solid rgba(0, 210, 106, 0.45);
+  border-bottom: 2px solid rgba(0, 210, 106, 0.45);
   box-sizing: border-box;
+  filter: drop-shadow(0 0 6px rgba(0, 210, 106, 0.22));
 }
 .lado-derecho .conector-pareja::after {
   content: '';
@@ -171,7 +176,14 @@ const alturaRonda = computed(() => {
   right: 100%;
   width: 60px;
   height: 2px;
-  background: #b5b5b5;
+  background: linear-gradient(270deg, rgba(0, 210, 106, 0.8), rgba(0, 210, 106, 0.15));
   transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+  .ronda-llave {
+    width: 315px;
+    min-width: 315px;
+  }
 }
 </style>
