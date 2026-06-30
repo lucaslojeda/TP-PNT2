@@ -9,12 +9,6 @@ import {
 const API_URL =
   'https://6a29a9d0f59cb8f65f1d75f5.mockapi.io/predicciones'
 
-/*
-  En esta colección MockAPI utiliza
-  "usuarioId" como identificador del registro.
-  Dejamos también "id" como alternativa por si
-  la configuración cambia en el futuro.
-*/
 const obtenerIdRegistro = (prediccion) => {
   return prediccion.usuarioId ?? prediccion.id
 }
@@ -76,11 +70,6 @@ const eliminarRegistro = async (
 }
 
 export const mockPrediccionesAPI = {
-  /*
-    Devuelve una sola predicción por partido
-    y usuario. Si existen datos antiguos
-    duplicados, conserva el más reciente.
-  */
   obtenerPredicciones: async (
     userId
   ) => {
@@ -129,10 +118,6 @@ export const mockPrediccionesAPI = {
     )
   },
 
-  /*
-    Crea o actualiza según la combinación
-    userId + partidoId.
-  */
   guardarPrediccion: async (
     prediccion
   ) => {
@@ -248,11 +233,6 @@ export const mockPrediccionesAPI = {
     )
   },
 
-  /*
-    Elimina todos los registros del usuario
-    para ese partido. Esto también corrige
-    posibles duplicados antiguos.
-  */
   eliminarPrediccion: async (
     userId,
     partidoId
@@ -278,10 +258,6 @@ export const mockPrediccionesAPI = {
     }
   },
 
-  /*
-    Limpia únicamente las predicciones
-    pertenecientes al usuario indicado.
-  */
   limpiarTodas: async (userId) => {
     const predicciones =
       await obtenerTodas()

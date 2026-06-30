@@ -57,19 +57,15 @@
 import { onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 
-// 1. Importamos los stores necesarios para armar el cruce del ranking
 import { useStoreRanking } from '@/stores/storeRanking'
 import { useResultadosRealesStore } from '@/stores/storeResultadosReales'
 import { usePrediccionesStore } from '@/stores/storePredicciones'
 
-// 2. Instanciamos los stores
 const rankingStore = useStoreRanking()
 const resultadosStore = useResultadosRealesStore()
 const prediccionesStore = usePrediccionesStore()
 
-// 3. Unificamos todo el ciclo de vida en un único onMounted
 onMounted(async () => {
-  // Cargamos secuencialmente los datos de las APIs de manera segura
   await prediccionesStore.cargarPredicciones()
   await resultadosStore.inicializar()
   await rankingStore.cargarRanking()
@@ -100,7 +96,7 @@ onMounted(async () => {
   margin: 0 0 10px 0;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: #00d26a; /* Verde neón haciendo juego con Perfil */
+  color: #00d26a;
 }
 
 .ranking-header p {

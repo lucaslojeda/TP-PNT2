@@ -48,18 +48,7 @@ export const useResultadosRealesStore = defineStore(
     const usuarioPuntajeLlaveCargado =
       ref('')
 
-    /*
-      Trae primero los países y partidos
-      desde el Mockachino de dataProde.
-
-      Después trae los resultados reales.
-    */
     const inicializar = async () => {
-      /*
-        Aunque los resultados ya estén cargados,
-        nos aseguramos de que también estén
-        disponibles los países.
-      */
       await dataProdeStore.inicializar()
 
       if (resultados.value.length === 0) {
@@ -167,14 +156,6 @@ export const useResultadosRealesStore = defineStore(
       ]
     }
 
-    /*
-      Orden de desempate utilizado por el proyecto:
-
-      1. Puntos
-      2. Diferencia de gol
-      3. Goles a favor
-      4. Nombre
-    */
     const compararEquipos = (
       equipoA,
       equipoB
@@ -196,10 +177,6 @@ export const useResultadosRealesStore = defineStore(
       )
     }
 
-    /*
-      Calcula la tabla de posiciones
-      correspondiente a un grupo.
-    */
     const calcularTablaGrupo = (grupo) => {
       const equiposDelGrupo =
         dataProdeStore.paises.filter(
@@ -251,10 +228,6 @@ export const useResultadosRealesStore = defineStore(
             return
           }
 
-          /*
-            Si el partido todavía no tiene
-            resultado, no se cuenta.
-          */
           if (
             partido.golesLocal === null ||
             partido.golesLocal === undefined ||
@@ -322,9 +295,6 @@ export const useResultadosRealesStore = defineStore(
         .sort(compararEquipos)
     }
 
-    /*
-      Calcula las tablas de los grupos A a L.
-    */
     const obtenerTablasReales = () => {
       const tablas = {}
 
@@ -336,10 +306,6 @@ export const useResultadosRealesStore = defineStore(
       return tablas
     }
 
-    /*
-      Indica si los 12 grupos tienen
-      sus 6 partidos cargados.
-    */
     const gruposCompletos = () => {
       return GRUPOS.every((grupo) => {
         const resultadosGrupo =
@@ -353,14 +319,6 @@ export const useResultadosRealesStore = defineStore(
       })
     }
 
-    /*
-      Obtiene:
-
-      - los primeros de cada grupo;
-      - los segundos;
-      - todos los terceros;
-      - los 8 mejores terceros.
-    */
     const obtenerClasificados = () => {
       const tablas =
         obtenerTablasReales()
@@ -399,11 +357,6 @@ export const useResultadosRealesStore = defineStore(
       }
     }
 
-    /*
-      Calcula en vivo el puntaje total
-      del usuario comparando sus predicciones
-      con los resultados reales.
-    */
     const puntajeFaseGrupos =
       computed(() => {
         let puntosAcumulados = 0
@@ -437,19 +390,6 @@ export const useResultadosRealesStore = defineStore(
         return puntosAcumulados
       })
 
-    /*
-      Calcula los puntos de la fase
-      eliminatoria.
-
-      - Marcador exacto y ganador: 6.
-      - Ganador correcto: 3.
-      - Ganador incorrecto: 0.
-
-      Si el partido se define por penales,
-      solo importa acertar el equipo que
-      clasifica. El marcador exacto de la
-      tanda no se compara.
-    */
     const puntajeLlaveEliminacion =
       computed(() => {
         return resultadosLlave.value.reduce(
@@ -508,10 +448,6 @@ export const useResultadosRealesStore = defineStore(
   }
 )
 
-/*
-  Calcula los puntos obtenidos
-  en un partido particular.
-*/
 function calcularPuntosPartido(
   prediccion,
   resultadoReal
@@ -559,9 +495,6 @@ function calcularPuntosPartido(
     return 0
   }
 
-  /*
-    Resultado exacto: 6 puntos.
-  */
   if (
     golesLocalPredichos ===
       golesLocalReales &&
@@ -583,10 +516,6 @@ function calcularPuntosPartido(
       golesVisitanteReales
     )
 
-  /*
-    Acierto de ganador o empate:
-    3 puntos.
-  */
   if (
     tendenciaPredicha === tendenciaReal
   ) {

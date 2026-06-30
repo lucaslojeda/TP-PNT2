@@ -39,30 +39,27 @@ function iniciarSesion() {
 </script>
 
 <style scoped>
-/* Contenedor principal: Ocupa toda la pantalla y centra el contenido */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* 100% del alto de la ventana */
-  background-color: #1a1a1a; /* El gris oscuro del fondo de tu menú */
+  min-height: 100vh;
+  background-color: #1a1a1a;
   font-family: sans-serif;
 }
 
-/* La tarjeta del formulario */
 .login-form {
-  background-color: #242424; /* Un gris apenas más claro para que resalte */
+  background-color: #242424;
   padding: 40px;
-  border-radius: 8px; /* Bordes redondeados */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Sombra sutil */
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Separación automática entre los inputs y el botón */
+  gap: 20px;
   width: 320px;
-  border: 1px solid #333; /* Borde muy sutil para separar del fondo */
+  border: 1px solid #333;
 }
 
-/* El título */
 .login-form h2 {
   color: #ffffff;
   text-align: center;
@@ -71,9 +68,8 @@ function iniciarSesion() {
   letter-spacing: 1px;
 }
 
-/* Las cajas de texto */
 .login-form input {
-  background-color: #1a1a1a; /* Fondo oscuro para el input */
+  background-color: #1a1a1a;
   border: 1px solid #444;
   color: #ffffff;
   padding: 12px;
@@ -82,12 +78,10 @@ function iniciarSesion() {
   transition: border-color 0.3s;
 }
 
-/* Efecto cuando el usuario hace clic en el input para escribir */
 .login-form input:focus {
-  border-color: #00d26a; /* El verde flúo de tu diseño */
+  border-color: #00d26a;
 }
 
-/* El botón estilo "Ver Jugadores" */
 .login-form button {
   background-color: transparent;
   color: #00d26a;
@@ -100,20 +94,17 @@ function iniciarSesion() {
   transition: all 0.3s;
 }
 
-/* Efecto cuando pasás el mouse por el botón (se invierten los colores) */
 .login-form button:hover:not(:disabled) {
   background-color: #00d26a;
   color: #1a1a1a;
 }
 
-/* Efecto visual cuando el botón está bloqueado (formulario incompleto) */
 .login-form button:disabled {
   border-color: #555;
   color: #555;
   cursor: not-allowed;
 }
 
-/* El mensaje de error rojo */
 .error-msg {
   color: #ff4c4c;
   font-size: 14px;

@@ -89,29 +89,24 @@ import Sidebar from '@/components/Sidebar.vue';
 import PrediccionesGuardadas from '@/components/PrediccionesGuardadas.vue';
 import { useStoreUsuario } from '@/stores/storeUsuario';
 
-// 1. Importamos los stores necesarios para calcular tus puntos en vivo
 import { useResultadosRealesStore } from '@/stores/storeResultadosReales';
 import { usePrediccionesStore } from '@/stores/storePredicciones';
 
 const router = useRouter();
 const storeUsuario = useStoreUsuario();
 
-// 2. Instanciamos ambos stores
 const resultadosStore = useResultadosRealesStore();
 const prediccionesStore = usePrediccionesStore();
 
 const usuarioData = ref({
   nombre: 'admin',
   foto: null
-  // Sacamos la propiedad 'puntos' fija de acá porque ahora la maneja Pinia
 });
 
 const editandoNombre = ref(false);
 const nuevoNombre = ref('');
 
-// Cargar datos del usuario desde localStorage e inicializar stores
 onMounted(async () => {
-  // A) Cargamos la información estética del perfil (Nombre y foto)
   const datosGuardados = localStorage.getItem('usuarioProde');
   if (datosGuardados) {
     usuarioData.value = JSON.parse(datosGuardados);
@@ -119,7 +114,6 @@ onMounted(async () => {
     guardarDatos();
   }
 
-  // B) Ejecutamos las llamadas asíncronas para que el calculador tenga data
   await prediccionesStore.cargarPredicciones();
   await resultadosStore.inicializar();
 });
