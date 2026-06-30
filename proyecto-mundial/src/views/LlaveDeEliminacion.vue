@@ -110,10 +110,10 @@ const baseConfigBanderas = {
   'Irán': { bg: 'https://flagcdn.com/w1280/ir.png', tarjetaBg: 'rgba(28, 58, 39, 0.35)', borde: '#239e46', texto: '#da251d' }
 }
 
-const urlBanderaFondo = ref('/imagenes/logo2026.png')
 const colorTarjetaBg = ref('rgba(31, 31, 31, 0.9)')
 const colorBordeLlave = ref('rgba(255, 255, 255, 0.1)')
 const colorTextoRonda = ref('#00d26a')
+const urlBanderaFondo = ref('/imagenes/logo2026.png')
 
 const estilosDinamicos = computed(() => ({
   '--bg-bandera': urlBanderaFondo.value ? `url(${urlBanderaFondo.value})` : 'none',
@@ -131,7 +131,7 @@ watch(() => llaveStore.campeon, (nuevoCampeon) => {
 
     setTimeout(() => {
       const config = baseConfigBanderas[nuevoCampeon.nombre] || {
-        bg: '', tarjetaBg: 'rgba(31, 31, 31, 0.9)', borde: '#00d26a', texto: '#00d26a'
+        bg: '/imagenes/logo2026.png', tarjetaBg: 'rgba(31, 31, 31, 0.9)', borde: '#00d26a', texto: '#00d26a'
       }
       urlBanderaFondo.value = config.bg
       colorTarjetaBg.value = config.tarjetaBg
@@ -309,7 +309,7 @@ onUnmounted(() => {
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-top: 50px;
+  margin-top: 100px;
   animation: slideUp 0.6s ease-out forwards;
   position: relative;
   z-index: 15;
@@ -340,11 +340,11 @@ onUnmounted(() => {
 
 .trofeo-real-wrapper {
   position: absolute;
-  top: -75px;
+  top: -52px;
   left: 50%;
   transform: translateX(-50%);
-  width: 100px;
-  height: 130px;
+  width: 88px;
+  height: 116px;
   pointer-events: none;
 }
 
@@ -363,7 +363,7 @@ onUnmounted(() => {
 }
 
 .campeon-card h2 {
-  margin: 40px 0 20px 0;
+  margin: 58px 0 20px 0;
   font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 2px;
