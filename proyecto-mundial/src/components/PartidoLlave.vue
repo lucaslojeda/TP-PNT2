@@ -128,6 +128,40 @@
 </template>
 
 <script setup>
+// ============================================================
+// NOTA DE ESTUDIO - PartidoLlave.vue
+// ============================================================
+// El componente de UN partido del bracket. Es "tonto" en el
+// sentido de que no toca el store directamente: recibe
+// `partido` por props y emite eventos ('guardar-prediccion',
+// 'reiniciar-prediccion') que el padre (RondaLlave ->
+// LlaveDeEliminacion) reenvía hacia storeLlaveEliminacion.
+// Esto es el patrón estándar de Vue: "props down, events up".
+//
+// La parte más interesante es la lógica de PENALES:
+// - resultadoEmpatado: compara los goles ingresados; si son
+//   iguales, hay empate (y en el Mundial eso significa que el
+//   partido se define por penales).
+// - puedeGuardar: el botón de guardar solo se habilita si: hay
+//   los dos equipos definidos Y hay goles cargados, Y SI hay
+//   empate, además exige que los penales estén completos
+//   (penalesCompletos) Y que tengan un ganador claro
+//   (penalesTienenGanador, o sea que no sean iguales entre sí).
+//   Si no hay empate, los penales ni se piden.
+//
+// watch(resultadoEmpatado, ...): si el usuario cambiaba el
+// marcador y dejaba de haber empate, limpia los campos de
+// penales que pudo haber cargado antes (para no dejar datos
+// inconsistentes).
+//
+// cargarDatosPartido(): rellena el formulario con los datos ya
+// guardados del partido (si prediccionGuardada es true) o lo
+// vacía. Se dispara con watch(props.partido, ..., {immediate:
+// true, deep: true}) porque cuando avanza el bracket, el objeto
+// `partido` recibido por props puede cambiar sus propiedades
+// internas sin que cambie la referencia del prop en sí (de ahí
+// el `deep: true`).
+// ============================================================
 import { computed, ref, watch } from 'vue'
 
 const props = defineProps({

@@ -83,6 +83,25 @@
 </template>
 
 <script setup>
+// ============================================================
+// NOTA DE ESTUDIO - PerfilView.vue
+// ============================================================
+// Pantalla de perfil: edición de nombre/foto + ver predicciones
+// guardadas (delegado al componente PrediccionesGuardadas).
+//
+// actualizarFoto(): usa FileReader.readAsDataURL para convertir
+// la imagen elegida en un string base64, que se guarda
+// directo en localStorage vía guardarDatos(). Es una solución
+// simple para un TP (no hay backend/servidor de archivos), pero
+// vale aclarar en la expo que una imagen grande puede ocupar
+// mucho espacio en localStorage (que tiene un límite ~5-10MB
+// por dominio).
+//
+// onMounted hace dos cosas en paralelo conceptualmente: A) trae
+// los datos "estéticos" del perfil (nombre/foto) directo de
+// localStorage, y B) inicializa los stores de predicciones y
+// resultados reales para que el cálculo de puntaje en vivo
+// (mostrado en el template) tenga todos los datos disponibles.
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Sidebar from '@/components/Sidebar.vue';

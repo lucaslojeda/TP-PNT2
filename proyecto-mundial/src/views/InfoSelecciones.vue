@@ -195,6 +195,11 @@
 </template>
 
 <script setup>
+// NOTA DE ESTUDIO: vista informativa de selecciones por grupo
+// (sin lógica de negocio). paisesFiltrados muestra solo los
+// países del grupo elegido en el selector. abrirPlantel/
+// cerrarPlantel manejan un modal simple con el detalle del
+// país clickeado (seleccionPaisActivo null = modal cerrado).
 import {
   computed,
   onMounted,

@@ -1,3 +1,36 @@
+/**
+ * ============================================================
+ * NOTA DE ESTUDIO - router/index.js
+ * ============================================================
+ * Define las rutas de la app y, lo más importante, un GUARD DE
+ * NAVEGACIÓN GLOBAL (router.beforeEach) que protege las rutas
+ * privadas.
+ *
+ * Cada ruta tiene un `meta`:
+ * - requiereAuth: true -> solo accesible si hay sesión activa.
+ * - soloInvitados: true -> solo accesible SI NO hay sesión
+ *   (caso del login: si ya estás logueado, no tiene sentido
+ *   que veas la pantalla de login de nuevo).
+ *
+ * router.beforeEach(to) se ejecuta ANTES de cada cambio de
+ * ruta. Primero resuelve si hay sesión activa: usa el estado en
+ * memoria (storeUsuario.estaLogueado) o, si no lo hay (por
+ * ejemplo recién recargaste la página con F5 y Pinia perdió el
+ * estado), intenta reconstruirla desde localStorage con
+ * cargarSesionGuardada().
+ *
+ * Después aplica dos reglas:
+ * 1. Si la ruta requiere auth y NO hay sesión -> redirige a
+ *    login, pero guardando la ruta original en
+ *    query.redirect, para poder volver ahí después de loguear
+ *    (ver LoginView.vue, que lee justamente ese query param).
+ * 2. Si la ruta es "solo invitados" y SÍ hay sesión -> redirige
+ *    a home (evita ver el login estando ya logueado).
+ *
+ * Si ninguna regla aplica, `return true` deja pasar la
+ * navegación normalmente.
+ * ============================================================
+ */
 import { createRouter, createWebHistory } from 'vue-router'
 import { useStoreUsuario } from '@/stores/storeUsuario'
 

@@ -16,6 +16,11 @@
 </template>
 
 <script setup>
+// NOTA DE ESTUDIO: implementa v-model custom con
+// modelValue/update:modelValue (el contrato estándar de Vue 3
+// para que un componente propio se pueda usar como
+// <FechaSelector v-model="fechaSeleccionada" /> desde el padre,
+// igual que un input nativo).
 defineProps({
   modelValue: {
     type: Number,

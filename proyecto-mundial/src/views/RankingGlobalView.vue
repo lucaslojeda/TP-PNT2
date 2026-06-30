@@ -54,6 +54,12 @@
 </template>
 
 <script setup>
+// NOTA DE ESTUDIO: el orden del onMounted importa. Carga
+// predicciones y resultados ANTES de cargarRanking, porque
+// storeRanking.cargarRanking() llama a sincronizarPuntajeActual()
+// que necesita storeResultados.puntajeTotalUsuario ya calculado
+// (computed que depende de ambos stores) para mostrar tu
+// puntaje correcto en la tabla, no un 0 desactualizado.
 import { onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 

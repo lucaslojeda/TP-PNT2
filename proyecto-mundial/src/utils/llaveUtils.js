@@ -1,3 +1,51 @@
+/**
+ * ============================================================
+ * NOTA DE ESTUDIO - llaveUtils.js
+ * ============================================================
+ * Acá vive el algoritmo más "pesado" de todo el proyecto: un
+ * BACKTRACKING para asignar los 8 "mejores terceros" del
+ * Mundial a los 8 lugares del bracket que les corresponden,
+ * respetando las restricciones oficiales de la FIFA (qué grupos
+ * puede enfrentar cada lugar).
+ *
+ * EL PROBLEMA:
+ * Tenés 8 terceros clasificados (de grupos que varían partido a
+ * partido) y 8 "lugares" en el bracket, cada uno con su propia
+ * lista de grupos permitidos (ver LUGARES_PARA_TERCEROS). No es
+ * trivial asignarlos en un solo paso: una asignación temprana
+ * puede dejar sin opciones válidas a un lugar posterior.
+ *
+ * asignarMejoresTerceros() resuelve esto con backtracking
+ * clásico (mismo patrón que sudoku o N-reinas):
+ *   1. Para el lugar actual (indiceLugar), prueba cada tercero
+ *      disponible.
+ *   2. Si el grupo del tercero está permitido en ese lugar, lo
+ *      asigna PROVISORIAMENTE y se llama a sí misma para
+ *      resolver el siguiente lugar con los terceros restantes.
+ *   3. Si la recursión llega hasta el final sin trabarse,
+ *      devuelve true y la asignación queda confirmada.
+ *   4. Si se traba (ningún tercero sirve para un lugar
+ *      posterior), hace `delete asignaciones[lugar.clave]`:
+ *      ESE es el "backtrack", deshace lo hecho y prueba la
+ *      siguiente opción para el lugar actual.
+ *
+ * generarCrucesDieciseisavos() valida que estén todos los
+ * clasificados, resuelve los terceros con el backtracking de
+ * arriba, y arma el array fijo de 16 cruces siguiendo el
+ * reglamento real del Mundial (la tabla oficial de la FIFA
+ * llevada a código).
+ *
+ * El resto son helpers simples:
+ * - crearPartido/normalizarEquipo: fábrica de un partido vacío.
+ * - crearRondas: arma los 5 arrays de partidos (16avos ya
+ *   completos, el resto vacíos, listos para llenarse vía
+ *   avanzarGanador en el store).
+ * - obtenerFaseSiguiente: siguiente elemento en ORDEN_FASES.
+ * - obtenerGanador: dado ganadorId, devuelve el objeto equipo.
+ * - limpiarPrediccionPartido: resetea un partido a su estado
+ *   inicial (usado por limpiarDescendencia en el store).
+ * ============================================================
+ */
 export const ORDEN_FASES = [
   'dieciseisavos',
   'octavos',

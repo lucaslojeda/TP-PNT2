@@ -1,4 +1,8 @@
 <script setup>
+// NOTA DE ESTUDIO: componente de presentación pura, sin lógica
+// (no toca stores). RouterLink de vue-router agrega
+// automáticamente la clase "router-link-active" en el link de
+// la ruta activa, que se usa en el <style> para resaltarlo.
 import { RouterLink } from 'vue-router'
 import logo from '@/assets/logo.png';
 </script>

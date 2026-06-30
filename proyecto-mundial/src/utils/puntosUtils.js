@@ -1,3 +1,27 @@
+/**
+ * ============================================================
+ * NOTA DE ESTUDIO - puntosUtils.js
+ * ============================================================
+ * Calcula el puntaje de UN partido de la llave (fase
+ * eliminatoria). A diferencia de la fase de grupos, acá no
+ * existe el empate como resultado final (siempre hay un
+ * ganador, eventualmente por penales), entonces la lógica de
+ * puntaje es distinta:
+ *
+ * 1. Si los equipos de la predicción no coinciden con los del
+ *    resultado real (coincidenEquipos), 0 puntos: el usuario
+ *    predijo un cruce que no se dio.
+ * 2. Si el ganador que predijiste NO coincide con el ganador
+ *    real, 0 puntos, sin importar el marcador.
+ * 3. Si acertaste el ganador:
+ *    - marcador exacto (en los 90 min, sin contar penales) -> 6
+ *    - ganador correcto pero marcador distinto -> 3
+ * Notar que el resultado de la TANDA DE PENALES nunca se
+ * compara número a número, solo importa quién avanza. Por eso
+ * esta función no toca penalesEquipo1/penalesEquipo2 en ningún
+ * momento, solo ganadorId.
+ * ============================================================
+ */
 export const calcularPuntosPartidoLlave = (
   prediccion,
   resultadoReal

@@ -1,3 +1,27 @@
+/**
+ * ============================================================
+ * NOTA DE ESTUDIO - storeFaseDeGrupos.js
+ * ============================================================
+ * OJO: este store es el "gemelo" de calcularTablaGrupo() en
+ * storeResultadosReales.js, pero con una diferencia clave:
+ *
+ * - storeResultadosReales.calcularTablaGrupo() arma la tabla
+ *   con los RESULTADOS REALES (resultados.value), o sea la
+ *   tabla de posiciones real del Mundial.
+ * - storeFaseDeGrupos.calcularTablaGrupo() arma la tabla con
+ *   las PREDICCIONES del usuario (prediccionesStore.predicciones
+ *   filtradas por grupo), o sea "cómo quedaría la tabla si se
+ *   cumplieran tus pronósticos".
+ *
+ * La lógica interna (sumar PJ/PG/PE/PP/GF/GC/DG/PTS y ordenar
+ * por el mismo criterio de desempate: puntos -> diferencia de
+ * gol -> goles a favor -> nombre) es prácticamente idéntica a
+ * propósito, para que la tabla "predicha" se vea y compare
+ * igual que la tabla "real". Esto es lo que probablemente uses
+ * en la vista de fase de grupos para mostrarle al usuario cómo
+ * va quedando su pronóstico antes de que termine la fase.
+ * ============================================================
+ */
 import { defineStore } from 'pinia'
 
 import { useDatosProdeStore } from '@/stores/storeDataProde'

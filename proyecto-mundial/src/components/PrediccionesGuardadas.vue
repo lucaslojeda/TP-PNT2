@@ -201,6 +201,30 @@
 </template>
 
 <script setup>
+// ============================================================
+// NOTA DE ESTUDIO - PrediccionesGuardadas.vue
+// ============================================================
+// Lista editable de todas las predicciones de fase de grupos
+// del usuario (se usa dentro de PerfilView).
+//
+// editando/golesEditLocal/golesEditVisitante/operacionEnCurso
+// son objetos (no refs simples) indexados por partidoId. Esto
+// permite que CADA fila de la lista tenga su propio estado de
+// edición independiente (si estás editando el partido X, el
+// resto de las filas no se ven afectadas) sin necesitar un
+// sub-componente por fila.
+//
+// predicciones (computed): ordena las predicciones de más
+// reciente a más antigua por fecha del partido.
+//
+// iniciarEdicion()/guardarEdicion(): patrón típico de "edición
+// inline": al iniciar, copia los valores actuales a los refs de
+// edición (golesEditLocal/golesEditVisitante); al guardar,
+// arma de nuevo el objeto `partido` (porque
+// prediccionesStore.actualizarPrediccion espera un partido, no
+// una predicción) y llama al store. Si falla, mensajeError se
+// muestra en el template sin cerrar el modo edición.
+// ============================================================
 import {
   computed,
   onMounted,

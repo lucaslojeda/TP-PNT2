@@ -1,3 +1,42 @@
+/**
+ * ============================================================
+ * NOTA DE ESTUDIO - validacionesDatos.js
+ * ============================================================
+ * Archivo de "guard clauses": valida que los datos que llegan
+ * de las APIs mock (Mockachino/localStorage) tengan la forma
+ * esperada ANTES de que el resto de la app intente usarlos.
+ * Es una práctica de defensa importante porque, al venir de un
+ * mock editable a mano (vos mismo pegaste el JSON en
+ * Mockachino), un typo o un campo faltante podría romper
+ * silenciosamente toda la app más adelante; mejor explotar acá
+ * con un error claro ("Datos inválidos en X: ...") que tener un
+ * bug fantasma en un componente.
+ *
+ * Helpers genéricos reutilizados en todo el archivo:
+ * - crearError(origen, detalle): arma un Error con mensaje
+ *   estandarizado, indicando en qué función/origen falló.
+ * - esObjeto / validarObjeto / validarArray / validarTexto /
+ *   esEnteroNoNegativo / validarGoles: chequeos de tipo básicos
+ *   (¿es objeto?, ¿es array?, ¿es texto no vacío?, ¿es un
+ *   entero >= 0 como deben ser los goles?).
+ *
+ * Funciones exportadas (una por tipo de dato del dominio):
+ * - validarDatosProde: países + fixture de partidos.
+ * - validarResultadosFaseGrupos: resultados reales de grupos.
+ * - validarRanking: lista de competidores del ranking.
+ * - validarPrediccionGrupo / validarPrediccionesGrupo:
+ *   una predicción de fase de grupos / la colección completa.
+ * - validarPartidoLlave / validarPartidosLlave: un partido del
+ *   bracket / todos los partidos de la llave.
+ * - validarPrediccionLlave / validarPrediccionesLlave:
+ *   ídem para predicciones de la llave eliminatoria.
+ *
+ * Todas siguen el mismo patrón: revisan estructura general
+ * (objeto/array), después campo por campo con los helpers de
+ * arriba, y tiran un Error específico apenas algo no cumple,
+ * para frenar el flujo lo antes posible (fail-fast).
+ * ============================================================
+ */
 const FASES_LLAVE = [
   'dieciseisavos',
   'octavos',

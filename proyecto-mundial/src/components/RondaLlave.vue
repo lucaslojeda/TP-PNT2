@@ -25,6 +25,39 @@
 </template>
 
 <script setup>
+// ============================================================
+// NOTA DE ESTUDIO - RondaLlave.vue
+// ============================================================
+// Pinta UNA columna del bracket (una fase) y la matemática de
+// dónde ubicar cada partido en altura, para que el árbol del
+// bracket se vea bien alineado (cada 2 partidos de una ronda
+// "convergen" visualmente en 1 partido de la ronda siguiente).
+//
+// `nivel` (prop) indica cuántas rondas atrás está esta fase
+// respecto de la final (0 = 16avos, ..., 4 = final). Con eso,
+// 2 ** nivel ("salto") da el espaciado vertical: cuanto más
+// avanzada la fase, más separados están los partidos (porque
+// representan más partidos "fusionados" de las fases previas).
+//
+// obtenerCentroPartido(indice): fórmula de centrado:
+// (salto/2 + indice*salto) * ALTO_SLOT. Es la misma idea que
+// posicionar hojas de un árbol binario: el primer partido se
+// centra a medio salto, y cada uno siguiente se corre un salto
+// completo, así los conectores (las líneas que unen rondas)
+// quedan perfectamente a mitad de camino entre los dos partidos
+// "padres".
+//
+// conectores (computed): genera, de a pares de partidos
+// (i, i+1), un conector vertical entre el centro del partido i
+// y el centro del partido i+1 — es la línea que visualmente
+// representa "estos dos partidos definen al siguiente".
+//
+// reenviarGuardarPrediccion/reenviarReiniciarPrediccion: este
+// componente NO toca el store, solo retransmite hacia arriba
+// los eventos que emite cada PartidoLlave hijo (patrón "props
+// down, events up" en cadena: PartidoLlave -> RondaLlave ->
+// LlaveDeEliminacion -> store).
+// ============================================================
 import { computed } from 'vue'
 import PartidoLlave from '@/components/PartidoLlave.vue'
 

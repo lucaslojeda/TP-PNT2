@@ -1,3 +1,8 @@
+// NOTA DE ESTUDIO: este servicio consume Mockachino (un mock
+// de solo LECTURA: siempre devuelve el mismo JSON fijo que vos
+// configuraste a mano). Trae países + fixture de partidos.
+// Antes de devolver los datos, los pasa por validarDatosProde
+// para garantizar que tengan la forma esperada (fail-fast).
 import { validarDatosProde } from '@/utils/validacionesDatos'
 
 const API_URL =

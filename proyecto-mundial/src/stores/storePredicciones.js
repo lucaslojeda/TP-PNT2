@@ -1,3 +1,34 @@
+/**
+ * ============================================================
+ * NOTA DE ESTUDIO - storePredicciones.js
+ * ============================================================
+ * Maneja el CRUD de las predicciones de FASE DE GRUPOS del
+ * usuario (el equivalente de storeLlaveEliminacion pero para
+ * los partidos de grupos en vez del bracket).
+ *
+ * predicciones es un objeto (no array) indexado por partidoId
+ * -> { [partidoId]: prediccion }. Esto es una decisión de
+ * diseño importante: usar un objeto en vez de un array permite
+ * acceso O(1) a la predicción de un partido puntual
+ * (obtenerPrediccion) sin tener que recorrer/buscar con find().
+ *
+ * Todas las operaciones (guardar/actualizar/reiniciar/limpiar)
+ * siguen el mismo patrón: arman el objeto `prediccion`, llaman
+ * a mockPrediccionesAPI (que simula un backend persistiendo en
+ * localStorage) y, si la llamada fue exitosa, recién ahí
+ * actualizan el estado reactivo local. Si la API falla, el
+ * catch guarda el mensaje en `error` y relanza el error (throw)
+ * para que el componente que llamó también pueda reaccionar
+ * (por ejemplo, mostrar un mensaje al usuario).
+ *
+ * guardarPrediccion y actualizarPrediccion están duplicadas
+ * casi textual porque mockPrediccionesAPI.guardarPrediccion
+ * hace upsert (crea o actualiza según exista o no); podrían
+ * unificarse en una sola función, pero se mantienen separadas
+ * por claridad semántica en el resto del código (saber si se
+ * está creando o editando).
+ * ============================================================
+ */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { mockPrediccionesAPI } from '@/services/mockPrediccionesAPI'

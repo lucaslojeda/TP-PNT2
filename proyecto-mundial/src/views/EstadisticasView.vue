@@ -175,6 +175,26 @@
 </template>
 
 <script setup>
+// ============================================================
+// NOTA DE ESTUDIO - EstadisticasView.vue
+// ============================================================
+// Dashboard de métricas, todo armado con `computed` que leen
+// de varios stores a la vez (dataProde, predicciones,
+// resultados reales, ranking, usuario). No tiene lógica de
+// negocio propia, solo agrega/cuenta/calcula porcentajes sobre
+// datos que YA viven en los stores:
+// - coberturaPredicciones: % de partidos del fixture que ya
+//   predijiste (totalPredicciones / totalPartidos).
+// - tendenciaPronosticos: cuenta cuántas veces predijiste
+//   "gana local/empate/gana visitante" y saca el porcentaje
+//   relativo al valor más alto (para graficar barras).
+// - prediccionesPorFecha: lo mismo pero agrupado por fecha del
+//   fixture (Fecha 1/2/3).
+// Si en la expo preguntan algo de "cómo armaste las
+// estadísticas", la respuesta corta es: todo son `computed`
+// reactivos sobre los datos de los stores, no hay cálculos
+// guardados aparte.
+// ============================================================
 import {
   computed,
   onMounted,

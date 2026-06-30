@@ -1,3 +1,45 @@
+/**
+ * ============================================================
+ * NOTA DE ESTUDIO - storeUsuario.js
+ * ============================================================
+ * Maneja login/sesión/perfil usando localStorage como "base de
+ * datos" (no hay backend real, es simulado para el TP).
+ * Dos claves de localStorage:
+ * - USERS_STORAGE_KEY ('usuariosProde'): la lista completa de
+ *   perfiles (puntos, fotos, fecha de último ingreso, etc.).
+ * - STORAGE_KEY ('usuarioProde'): solo la sesión activa actual.
+ *
+ * USUARIOS_FIJOS son las credenciales hardcodeadas (usuario/
+ * contraseña) — esto está bien para un TP de práctica, pero
+ * OJO: en un proyecto real nunca se guardan contraseñas en
+ * texto plano ni en el código fuente. Bueno para mencionar en
+ * la expo como "limitación conocida / fuera de alcance del TP".
+ *
+ * inicializarUsuarios(): hace un MERGE entre USUARIOS_FIJOS
+ * (credenciales) y lo que haya persistido en localStorage
+ * (puntos, fotos). Así, si el usuario ya jugó antes, no se le
+ * resetean los puntos cada vez que recarga la página; solo se
+ * "rellenan" los campos que falten con crearPerfilBase.
+ *
+ * cargarSesionGuardada(): al recargar la página (F5), Pinia
+ * pierde el estado en memoria. Esta función reconstruye la
+ * sesión leyendo STORAGE_KEY de localStorage, validando que
+ * tenga `autenticado: true` y que el usuario siga existiendo
+ * en la lista — es lo que da la sensación de "sesión persistente"
+ * sin tener un backend con tokens reales.
+ *
+ * iniciarSesion(): valida usuario/contraseña contra
+ * USUARIOS_FIJOS (no contra `usuarios`, que es el perfil
+ * "enriquecido"), incrementa el contador de ingresos y guarda
+ * la fecha de último ingreso, y llama a sincronizarSesion para
+ * dejar todo consistente (estado reactivo + localStorage).
+ *
+ * actualizarPuntosUsuario(): la usa storeRanking.js cada vez
+ * que cambia el puntaje en vivo del usuario, para que quede
+ * persistido y el ranking lo refleje incluso después de
+ * recargar la página.
+ * ============================================================
+ */
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 

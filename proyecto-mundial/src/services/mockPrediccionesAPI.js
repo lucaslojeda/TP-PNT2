@@ -1,6 +1,24 @@
+// ============================================================
+// NOTA DE ESTUDIO - mockPrediccionesAPI.js
+// ============================================================
+// A diferencia de dataProdeAPI (Mockachino, solo lectura), este
+// servicio usa MockAPI.io: un backend REST real (aunque de
+// prueba) que SÍ soporta GET/POST/PUT/DELETE persistentes.
+// Por eso acá hay lógica de "upsert" real: guardarPrediccion
+// busca si ya existe una predicción para ese usuario+partido
+// (buscarPrediccion) y decide si hacer POST (crear) o PUT
+// (actualizar) según corresponda.
+//
+// obtenerValorFecha / obtenerIdRegistro: MockAPI.io no permite
+// elegir libremente el nombre del campo id en algunas
+// configuraciones, así que estos helpers son defensivos: usan
+// `usuarioId` o `id` según lo que venga, y para desempatar
+// duplicados (predicciones viejas que quedaron sueltas) se
+// quedan con la de fecha más reciente (fechaGuardado), o si no
+// hay fecha, con el id más alto como aproximación.
+//
 // MOCK API para predicciones
 // Guarda las predicciones en MockAPI
-
 import {
   validarPrediccionGrupo,
   validarPrediccionesGrupo

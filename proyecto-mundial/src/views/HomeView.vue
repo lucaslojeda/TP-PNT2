@@ -109,6 +109,13 @@
 </template>
 
 <script setup>
+// NOTA DE ESTUDIO: pantalla principal (home/dashboard). El
+// onMounted es importante: dispara la carga en CADENA de los
+// 4 stores principales en orden (países/partidos -> tus
+// predicciones -> resultados reales -> ranking), porque cada
+// uno depende de datos del anterior. partidosFiltrados muestra
+// solo los partidos de la fecha seleccionada (FechaSelector),
+// ordenados cronológicamente combinando fecha+hora en un Date.
 import {
   computed,
   onMounted,

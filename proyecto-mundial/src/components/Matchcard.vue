@@ -109,6 +109,30 @@
 </template>
 
 <script setup>
+// ============================================================
+// NOTA DE ESTUDIO - Matchcard.vue
+// ============================================================
+// Tarjeta de un partido de fase de grupos: recibe `partido`
+// por props y maneja el formulario de predicción (goles local/
+// visitante) para ese partido puntual.
+//
+// watch(prediccionExistente, ..., {immediate:true}): cada vez
+// que cambia la predicción guardada en el store (por ejemplo al
+// cargar la página, o si se reinicia desde otro lado), este
+// watch resincroniza los inputs locales (golesLocal/
+// golesVisitante) con lo que hay guardado. El `immediate: true`
+// hace que también corra una vez al montar el componente, no
+// solo en cambios futuros.
+//
+// validarGolesLocal/validarGolesVisitante: sanitizan el input
+// en tiempo real con regex (/\D/g, quita todo lo que no sea
+// dígito), evitando que el usuario tipee letras o símbolos.
+//
+// estadoPrediccion: es un mini estado derivado de 3 situaciones
+// posibles ("Sin predicción" / "Predicción sin guardar" /
+// "Predicción guardada"), útil para mostrar feedback visual sin
+// guardar ese estado aparte (se calcula solo).
+// ============================================================
 import { computed, ref, watch } from 'vue'
 
 import { useDatosProdeStore } from '@/stores/storeDataProde'

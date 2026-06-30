@@ -1,3 +1,48 @@
+/**
+ * ============================================================
+ * NOTA DE ESTUDIO - storeLlaveEliminacion.js
+ * ============================================================
+ * Este store maneja TODA la lógica del bracket de eliminación
+ * directa: 16avos -> octavos -> cuartos -> semifinales -> final.
+ *
+ * ESTRUCTURA DE DATOS:
+ * Hay 5 arrays reactivos (uno por fase). Cada partido es un
+ * objeto con equipo1, equipo2, goles, penales y ganadorId.
+ * Los 5 arrays están "linkeados": el ganador de un partido de
+ * una fase pasa a ocupar un lugar en un partido de la fase
+ * siguiente.
+ *
+ * LA FUNCIÓN CLAVE ES avanzarGanador(partido):
+ * Calcula matemáticamente a qué partido de la fase siguiente
+ * tiene que ir el ganador. Si el partido actual está en la
+ * posición `indiceActual` de su fase, el partido que le
+ * corresponde en la fase siguiente es Math.floor(indiceActual/2)
+ * (cada 2 partidos se reducen a 1). Si indiceActual es par, el
+ * ganador entra como equipo1; si es impar, entra como equipo2.
+ * Así funciona cualquier bracket de eliminación: partidos 0 y 1
+ * alimentan al partido 0 siguiente, 2 y 3 al partido 1, etc.
+ *
+ * guardarPrediccion(): valida partido y equipos -> arma la
+ * predicción (detecta empate para pedir penales) -> la persiste
+ * vía la API mock -> actualiza el partido local -> llama a
+ * avanzarGanador para propagar el resultado al bracket.
+ *
+ * limpiarDescendencia() es RECURSIVA: si reiniciás una
+ * predicción de, por ejemplo, octavos, hay que deshacer también
+ * el efecto dominó que ya armó cuartos, semis y final con ese
+ * ganador. Por eso se llama a sí misma fase por fase hasta
+ * llegar a la final, evitando que quede un equipo "fantasma" en
+ * una ronda avanzada.
+ *
+ * cargarPredicciones() / aplicarPrediccionGuardada(): al entrar
+ * a la vista, trae las predicciones guardadas, las ORDENA por
+ * fase con ORDEN_FASES (importante: si no se ordenan, se podría
+ * intentar aplicar una predicción de cuartos antes de que ese
+ * partido tenga sus dos equipos definidos por octavos) y las
+ * reaplica una por una, disparando avanzarGanador para
+ * reconstruir el estado completo del bracket.
+ * ============================================================
+ */
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 
@@ -89,6 +134,10 @@ export const useLlaveEliminacionStore =
       })
     }
 
+    // NOTA: acá pasa la magia del bracket. Dado un partido ya
+    // resuelto, calcula su "hermano" en la fase siguiente usando
+    // indiceActual/2 (división entera) y lo ubica como equipo1
+    // o equipo2 según si el índice era par o impar.
     const avanzarGanador = (partido) => {
       const ganador =
         obtenerGanador(partido)
@@ -256,6 +305,10 @@ export const useLlaveEliminacionStore =
       }
     }
 
+    // NOTA: función RECURSIVA. Al reiniciar un partido hay que
+    // "deshacer" el efecto dominó en todas las fases siguientes
+    // que ya usaban a ese ganador. Por eso se llama a sí misma
+    // (más abajo) avanzando fase por fase hasta llegar a la final.
     const limpiarDescendencia = async (
       fase,
       indicePartido

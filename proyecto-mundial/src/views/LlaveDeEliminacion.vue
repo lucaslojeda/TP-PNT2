@@ -73,6 +73,26 @@
 </template>
 
 <script setup>
+// ============================================================
+// NOTA DE ESTUDIO - LlaveDeEliminacion.vue
+// ============================================================
+// Vista contenedora del bracket. Su trabajo no es calcular
+// nada (eso ya lo hace storeLlaveEliminacion + llaveUtils),
+// sino: 1) inicializar la llave al montar el componente
+// (onMounted -> llaveStore.inicializarLlave), 2) manejar
+// detalles puramente visuales:
+//
+// - estilosDinamicos / baseConfigBanderas: cuando hay un
+//   campeón (watch sobre llaveStore.campeon), cambia colores y
+//   la imagen de fondo para "festejar" con los colores de la
+//   bandera del equipo campeón (con un setTimeout para dar
+//   tiempo a una transición CSS antes de cambiar el fondo).
+// - sincronizarDesdeLlave / sincronizarDesdeBarra: el bracket
+//   es muy ancho (scroll horizontal), entonces hay una barra de
+//   scroll personalizada abajo que se mantiene sincronizada con
+//   el scroll real del tablero. La bandera `sincronizando` evita
+//   un loop infinito (A mueve a B, B mueve a A, A mueve a B...).
+// ============================================================
 import {
   nextTick,
   onMounted,

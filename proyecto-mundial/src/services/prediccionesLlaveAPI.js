@@ -1,3 +1,8 @@
+// NOTA DE ESTUDIO: el "gemelo" de mockPrediccionesAPI.js pero
+// para predicciones de la LLAVE eliminatoria en vez de fase de
+// grupos. También usa MockAPI.io (REST real), con la misma
+// lógica de upsert: busca si ya existe predicción para ese
+// usuario+partido y decide PUT vs POST.
 import {
   validarPrediccionLlave,
   validarPrediccionesLlave

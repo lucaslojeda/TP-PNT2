@@ -11,6 +11,14 @@
 </template>
 
 <script setup>
+// NOTA DE ESTUDIO: vista simple de login. Delega toda la
+// validación de credenciales a storeUsuario.iniciarSesion (ahí
+// vive la lógica real). Si la sesión arranca bien, usa
+// router.push leyendo query.redirect — esto es lo que permite
+// que, si entraste a una ruta protegida sin loguearte, el
+// router te mande primero al login y DESPUÉS te devuelva
+// exactamente a la página que querías ver (ver router/index.js
+// y su guard de navegación).
 
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';

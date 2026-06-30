@@ -38,6 +38,12 @@
 </template>
 
 <script setup>
+// NOTA DE ESTUDIO: vista simple con un toggle "predicciones"
+// vs "real" (modoActivo). El modo "predicciones" usa la tabla
+// armada por storeFaseDeGrupos (las predicciones del usuario);
+// el modo "real" usa storeResultadosReales, que recién se carga
+// la primera vez que se cambia a ese modo (cambiarAReal), para
+// no pedir datos de más si el usuario nunca lo mira.
 import { ref, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import GrupoTabla from '@/components/GrupoTabla.vue'

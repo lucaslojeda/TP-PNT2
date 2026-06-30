@@ -1,3 +1,38 @@
+/**
+ * ============================================================
+ * NOTA DE ESTUDIO - storeResultadosReales.js
+ * ============================================================
+ * Este store es el "motor" de la fase de grupos y del sistema
+ * de puntaje. Conecta los resultados reales con las tablas de
+ * posiciones y con el puntaje del usuario.
+ *
+ * calcularTablaGrupo(grupo): recorre los resultados reales de
+ * ese grupo y va acumulando PJ/PG/PE/PP/GF/GC/DG/PTS por equipo
+ * (3 pts victoria, 1 pts empate, regla estándar de fútbol).
+ * Al final ordena con compararEquipos, que aplica el criterio
+ * de desempate: puntos -> diferencia de gol -> goles a favor ->
+ * nombre (alfabético, como último recurso).
+ *
+ * obtenerClasificados(): es el puente hacia llaveUtils.js. Toma
+ * primero y segundo de cada grupo, junta todos los terceros y
+ * se queda con los 8 "mejores terceros" (mismo compararEquipos,
+ * cortando con .slice(0, 8)). El objeto que devuelve
+ * {primeros, segundos, terceros, mejoresTerceros} es justo lo
+ * que después recibe generarCrucesDieciseisavos() para armar
+ * el bracket.
+ *
+ * SISTEMA DE PUNTAJE (dos partes separadas):
+ * - calcularPuntosPartido (función suelta al final del archivo,
+ *   fase de grupos): 6 pts si acertás el marcador exacto,
+ *   3 pts si solo acertás la tendencia (ganador/empate, usando
+ *   Math.sign de la diferencia de goles), 0 si errás todo.
+ * - calcularPuntosPartidoLlave (importada de puntosUtils.js,
+ *   fase eliminatoria): misma idea pero con la particularidad
+ *   de los penales (ver nota en puntosUtils.js).
+ * Ambos puntajes son `computed`, se recalculan solos cuando
+ * cambian resultados o predicciones, sin llamarlos a mano.
+ * ============================================================
+ */
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { resultadosRealesAPI } from '@/services/resultadosRealesAPI'

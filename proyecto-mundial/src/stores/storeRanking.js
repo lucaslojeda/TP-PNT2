@@ -1,3 +1,30 @@
+/**
+ * ============================================================
+ * NOTA DE ESTUDIO - storeRanking.js
+ * ============================================================
+ * Arma el ranking global mezclando dos fuentes de datos:
+ *
+ * 1. "Usuarios fijos": los usuarios mock locales (storeUsuario.
+ *    usuarios), donde al usuario actualmente logueado se le
+ *    pisa el puntaje guardado por el puntaje EN VIVO calculado
+ *    en storeResultadosReales.puntajeTotalUsuario (así el
+ *    ranking siempre refleja tus predicciones actualizadas, no
+ *    un valor viejo guardado).
+ * 2. "Ranking externo": competidores que vienen de la API mock
+ *    (rankingAPI) y que NO están entre los usuarios fijos
+ *    (se filtran por id con un Set para evitar duplicados).
+ *
+ * watch(): observa puntajeTotalUsuario y, cada vez que cambia
+ * (por ejemplo guardás una nueva predicción), llama a
+ * sincronizarPuntajeActual() para persistir ese puntaje en el
+ * store de usuario. Esto es lo que hace que el ranking se
+ * actualice "solo" sin que el componente tenga que pedirlo.
+ *
+ * rankingOrdenado (computed): junta ambas listas y ordena de
+ * mayor a menor puntaje. top3Ranking es simplemente el podio
+ * (los primeros 3 de esa lista ya ordenada).
+ * ============================================================
+ */
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { rankingAPI } from '@/services/resultadosRealesAPI'

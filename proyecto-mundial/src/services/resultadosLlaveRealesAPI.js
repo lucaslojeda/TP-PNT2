@@ -1,3 +1,8 @@
+// NOTA DE ESTUDIO: Mockachino de solo lectura con los
+// RESULTADOS REALES de la llave (a diferencia de
+// prediccionesLlaveAPI.js, que guarda lo que predijo el
+// usuario). Esto es lo que consume storeResultadosReales para
+// calcular el puntaje de la fase eliminatoria.
 import { validarPartidosLlave } from '@/utils/validacionesDatos'
 
 const API_URL =

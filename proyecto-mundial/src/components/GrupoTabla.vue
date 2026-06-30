@@ -43,6 +43,13 @@
 </template>
 
 <script setup>
+// NOTA DE ESTUDIO: muestra la tabla de posiciones de UN grupo.
+// La prop `modo` ('predicciones' o 'real') decide a cuál de los
+// dos stores "gemelos" preguntarle: faseGruposStore (tabla
+// armada con TUS predicciones) o resultadosRealesStore (tabla
+// con los resultados reales del Mundial). Es el mismo
+// componente reutilizado para ambas vistas, solo cambia la
+// fuente de datos según el modo activo.
 import { computed } from 'vue'
 import { useFaseGruposStore } from '@/stores/storeFaseDeGrupos'
 import { useResultadosRealesStore } from '@/stores/storeResultadosReales'

@@ -1,3 +1,14 @@
+// ============================================================
+// NOTA DE ESTUDIO - resultadosRealesAPI.js
+// ============================================================
+// Dos Mockachinos de solo lectura en un mismo archivo:
+// - resultadosRealesAPI: resultados reales de la FASE DE
+//   GRUPOS (alimenta storeResultadosReales).
+// - rankingAPI: lista de competidores externos del ranking
+//   global (alimenta storeRanking).
+// Ambos siguen el mismo patrón: fetch -> chequear response.ok
+// -> parsear JSON -> validar la forma de los datos antes de
+// devolverlos al store que los pidió.
 import {
   validarRanking,
   validarResultadosFaseGrupos
